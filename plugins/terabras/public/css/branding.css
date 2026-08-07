@@ -1,0 +1,109 @@
+/*
+ * Terabras branding — injected on every page by the terabras plugin.
+ * Served from /plugins/terabras/css/branding.css.
+ *
+ * NOTE ON PATHS: logo urls below are ABSOLUTE (/plugins/terabras/img/...).
+ * They are consumed through CSS custom properties by GLPI's core stylesheet
+ * (served from /css/), and a relative url() inside a custom property resolves
+ * against the *using* stylesheet, not this one — which would wrongly yield
+ * /img/... . Absolute paths avoid that. (Assumes GLPI is served at the web
+ * root; if deployed under a sub-path, prefix these with that base path.)
+ *
+ * Brand palette: blue #140078 (primary) / orange #FF7800 (accent).
+ * Loaded AFTER GLPI core CSS, so these overrides win at equal specificity.
+ */
+
+/* ------------------------------------------------------------------ */
+/* 1. Logos — swap GLPI's logo custom properties for the Terabras set. */
+/* ------------------------------------------------------------------ */
+:root {
+    /* white variants (shown on the dark side menu / dark theme) */
+    --glpi-logo-light: url("/plugins/terabras/img/wordmark-white.png");
+    --glpi-logo-light-reduced: url("/plugins/terabras/img/symbol-white.png");
+    --glpi-logo-light-login: url("/plugins/terabras/img/wordmark-white-login.png");
+
+    /* blue variants (shown on light backgrounds, e.g. the login card) */
+    --glpi-logo-dark: url("/plugins/terabras/img/wordmark-blue.png");
+    --glpi-logo-dark-reduced: url("/plugins/terabras/img/symbol-blue.png");
+    --glpi-logo-dark-login: url("/plugins/terabras/img/wordmark-blue-login.png");
+}
+
+/* The Terabras wordmark is much wider (~6:1) than the square GLPI mark, so it
+   must be scaled to fit instead of rendering at its native pixel size. */
+.page .glpi-logo {
+    background-size: contain !important;
+    background-position: left center !important;
+    width: 150px !important;
+}
+
+/* Login screen logo uses `content:` (a replaced image) — keep aspect ratio. */
+.page-anonymous .glpi-logo {
+    object-fit: contain;
+    width: 230px;
+    height: 64px;
+}
+
+/* ------------------------------------------------------------------ */
+/* 2. Brand colors — light (default) scope.                           */
+/* ------------------------------------------------------------------ */
+:root {
+    --tblr-primary: #140078;
+    --tblr-primary-rgb: 20, 0, 120;
+    --tblr-primary-fg: #ffffff;
+
+    /* side menu */
+    --glpi-mainmenu-bg: #140078;
+    --glpi-mainmenu-fg: #ffffff;
+    --glpi-mainmenu-fg-muted: #ffffffb3;
+
+    /* GLPI accent palette (color-4 is the highlight accent) */
+    --glpi-palette-color-1: #140078;
+    --glpi-palette-color-2: #ffffff;
+    --glpi-palette-color-3: #3a2ca0;
+    --glpi-palette-color-4: #ff7800;
+}
+
+/* ------------------------------------------------------------------ */
+/* 3. Brand colors — dark scope.                                      */
+/*    GLPI flags any dark palette (auror_dark, darker, midnight, …)    */
+/*    with data-glpi-theme-dark="1", so this catches them all.        */
+/* ------------------------------------------------------------------ */
+:root[data-glpi-theme-dark="1"] {
+    --tblr-primary: #6a5cff;
+    --tblr-primary-rgb: 106, 92, 255;
+    --tblr-primary-fg: #ffffff;
+
+    --glpi-mainmenu-bg: #0a0330;
+    --glpi-mainmenu-fg: #ffffff;
+    --glpi-mainmenu-fg-muted: #ffffff99;
+
+    --glpi-palette-color-1: #12102a;
+    --glpi-palette-color-2: #ffffff;
+    --glpi-palette-color-3: #3a2ca0;
+    --glpi-palette-color-4: #ff7800;
+}
+
+/* ------------------------------------------------------------------ */
+/* 4. Remove leftover hardcoded GLPI branding (no core edits).        */
+/*    - login footer + "About" modal copyright link (class .copyright) */
+/*    - GLPI logo image inside the "About" modal                       */
+/* ------------------------------------------------------------------ */
+a.copyright {
+    font-size: 0;
+    color: transparent;
+    text-decoration: none;
+}
+
+a.copyright::after {
+    content: "\00A9 Terabras";
+    font-size: 0.8125rem;
+    color: var(--tblr-muted, #6c757d);
+    display: inline-block;
+}
+
+/* Replace the GLPI logo in the admin "About" dialog with the Terabras mark. */
+img[title="GLPI Logo"] {
+    content: url("/plugins/terabras/img/symbol-blue.png");
+    max-width: 96px;
+    height: auto;
+}

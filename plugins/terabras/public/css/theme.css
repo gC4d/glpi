@@ -1,0 +1,210 @@
+/*
+ * Terabras — modern reskin ("Linear/Notion" direction).
+ * Loaded AFTER branding.css, so it owns the chrome look.
+ * CSS-only, zero core edits: overrides Tabler (--tblr-*) and GLPI (--glpi-*)
+ * custom properties plus a handful of component rules.
+ *
+ * Strategy: light default on :root; dark under [data-glpi-theme-dark="1"].
+ */
+
+/* =================================================================== */
+/* 1. Global design tokens                                             */
+/* =================================================================== */
+:root {
+    /* roundness — softer, modern */
+    --tblr-border-radius: 9px;
+    --tblr-border-radius-sm: 6px;
+    --tblr-border-radius-lg: 12px;
+
+    /* cool, quiet neutrals biased toward the brand navy */
+    --tblr-body-bg: #fbfbfc;
+    --tblr-bg-surface: #ffffff;
+    --tblr-bg-surface-secondary: #f5f5f8;
+    --tblr-bg-surface-tertiary: #f0f0f4;
+    --tblr-bg-forms: #ffffff;
+    --tblr-border-color: #ececf1;
+    --tblr-border-color-translucent: rgba(20, 0, 60, .08);
+
+    /* elevation — barely-there, tightens on hover */
+    --tblr-box-shadow: 0 1px 2px rgba(20, 0, 60, .04), 0 1px 3px rgba(20, 0, 60, .06);
+    --tblr-box-shadow-sm: 0 1px 2px rgba(20, 0, 60, .05);
+    --tblr-box-shadow-card: 0 1px 2px rgba(20, 0, 60, .04), 0 1px 3px rgba(20, 0, 60, .06);
+
+    /* light, airy side menu (was heavy navy) */
+    --glpi-mainmenu-bg: #ffffff;
+    --glpi-mainmenu-fg: #3b3b49;
+    --glpi-mainmenu-fg-muted: #9a9aa8;
+    --glpi-mainmenu-active-bg: #eceafa;
+
+    /* on a light sidebar the logo must be the blue (dark) wordmark */
+    --glpi-logo: var(--glpi-logo-dark);
+    --glpi-logo-reduced: var(--glpi-logo-dark-reduced);
+}
+
+body {
+    font-feature-settings: "cv05", "ss01";
+    -webkit-font-smoothing: antialiased;
+}
+
+/* =================================================================== */
+/* 2. Dark scope — keep a real dark chrome + white logo               */
+/* =================================================================== */
+:root[data-glpi-theme-dark="1"] {
+    --tblr-body-bg: #0b0b0f;
+    --tblr-bg-surface: #141419;
+    --tblr-bg-surface-secondary: #1b1b22;
+    --tblr-bg-surface-tertiary: #202028;
+    --tblr-bg-forms: #141419;
+    --tblr-border-color: #26262e;
+    --tblr-border-color-translucent: rgba(255, 255, 255, .08);
+    --tblr-box-shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    --tblr-box-shadow-card: 0 1px 2px rgba(0, 0, 0, .3);
+
+    --glpi-mainmenu-bg: #0a0330;
+    --glpi-mainmenu-fg: #e6e6ee;
+    --glpi-mainmenu-fg-muted: #9a9aa8;
+    --glpi-mainmenu-active-bg: #211d42;
+
+    --glpi-logo: var(--glpi-logo-light);
+    --glpi-logo-reduced: var(--glpi-logo-light-reduced);
+}
+
+/* =================================================================== */
+/* 3. Sidebar                                                          */
+/* =================================================================== */
+.sidebar,
+.navbar-vertical {
+    border-right: 1px solid var(--tblr-border-color);
+    box-shadow: none !important;
+}
+.sidebar .nav-item {
+    margin: 1px 6px;
+}
+.sidebar .nav-link {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background-color .12s ease, color .12s ease;
+}
+.sidebar .nav-link:hover {
+    background: var(--tblr-bg-surface-secondary);
+    color: var(--tblr-body-color);
+}
+.sidebar .nav-item.active > .nav-link,
+.sidebar .nav-link.active,
+.sidebar .nav-link.show {
+    background: var(--glpi-mainmenu-active-bg);
+    color: var(--tblr-primary);
+}
+.sidebar .navbar-brand {
+    padding-top: 10px;
+    padding-bottom: 14px;
+}
+
+/* =================================================================== */
+/* 4. Top bar                                                          */
+/* =================================================================== */
+.page > header.navbar {
+    background: color-mix(in srgb, var(--tblr-body-bg) 82%, transparent);
+    backdrop-filter: blur(8px);
+    box-shadow: none !important;
+    border-bottom: 1px solid var(--tblr-border-color);
+}
+.secondary-bar {
+    box-shadow: none !important;
+    border-bottom: 1px solid var(--tblr-border-color);
+    background: var(--tblr-body-bg);
+}
+
+/* =================================================================== */
+/* 5. Cards                                                            */
+/* =================================================================== */
+.card {
+    --tblr-card-border-radius: 12px;
+    --tblr-card-cap-bg: var(--tblr-bg-surface) !important;
+    border-color: var(--tblr-border-color);
+    box-shadow: var(--tblr-box-shadow);
+}
+.card > .card-header,
+.card > .card-status-top + .card-header {
+    border-bottom: 1px solid var(--tblr-border-color);
+    font-weight: 600;
+}
+
+/* =================================================================== */
+/* 6. Tables                                                          */
+/* =================================================================== */
+.table {
+    --tblr-table-border-color: var(--tblr-border-color);
+}
+.table > thead th {
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: .04em;
+    font-weight: 600;
+    color: var(--tblr-secondary);
+}
+
+/* =================================================================== */
+/* 7. Buttons & form controls                                         */
+/* =================================================================== */
+.btn {
+    font-weight: 550;
+}
+.btn-primary {
+    box-shadow: none;
+}
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--tblr-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--tblr-primary) 18%, transparent);
+}
+
+/* =================================================================== */
+/* 8. Badges / pills — a touch rounder                                */
+/* =================================================================== */
+.badge {
+    border-radius: 20px;
+    font-weight: 550;
+}
+
+/* =================================================================== */
+/* 9. Dashboard big-number tiles                                      */
+/*    GLPI colors each tile via a per-id rule (#bn_xxx{background}).   */
+/*    Calm them into uniform neutral cards; the arbitrary decorative   */
+/*    color becomes a single subtle navy accent on the watermark icon. */
+/* =================================================================== */
+.dashboard .card.big-number {
+    background-color: var(--tblr-bg-surface) !important;
+    color: var(--tblr-body-color) !important;
+    border: 1px solid var(--tblr-border-color) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--tblr-box-shadow);
+    transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+}
+.dashboard .card.big-number:hover {
+    box-shadow: 0 4px 12px rgba(20, 0, 60, .08), 0 2px 4px rgba(20, 0, 60, .05);
+    transform: translateY(-1px);
+}
+.dashboard .card.big-number .number,
+.dashboard .card.big-number .suffix {
+    color: var(--tblr-body-color) !important;
+}
+.dashboard .card.big-number .label {
+    color: var(--tblr-secondary) !important;
+    font-weight: 500;
+}
+.dashboard .card.big-number .main-icon {
+    color: var(--tblr-primary) !important;
+    opacity: .15 !important;
+}
+
+/* Chart widgets: GLPI leaves them a fixed light bg (looks wrong in dark).
+   Neutralize to the theme surface so they belong in both light and dark. */
+.dashboard .card.g-chart {
+    background-color: var(--tblr-bg-surface) !important;
+    color: var(--tblr-body-color) !important;
+    border: 1px solid var(--tblr-border-color) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--tblr-box-shadow);
+}

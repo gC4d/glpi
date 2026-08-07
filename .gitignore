@@ -4,6 +4,9 @@
 !/marketplace/.gitkeep
 /plugins/*
 !/plugins/.gitkeep
+# First-party Terabras plugins (branding + future modules) are version-controlled;
+# third-party / marketplace plugins stay ignored.
+!/plugins/terabras*
 /files/*/*
 !/files/*/.gitkeep
 /.buildpath
@@ -52,6 +55,11 @@ phpstan.neon
 /.dump/
 /tests/js/coverage/
 .DS_Store
+
+# Terabras brand source kit (design sources, not app code — keep out of git)
+/TERABRAS_IdentidadeVisual*/
+# Local backup of the original GLPI favicon (restore point, not versioned)
+/public/pics/*.glpi.ico.bak
 
 # Playwright
 /tests/e2e/results/
