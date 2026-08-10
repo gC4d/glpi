@@ -13,13 +13,23 @@ file, so upstream GLPI updates keep merging cleanly.
 | Brand colors (light **and** dark) | `--tblr-primary`, `--glpi-mainmenu-*`, `--glpi-palette-color-*` |
 | GLPI "Powered by Teclib" copyright | hidden + replaced with "© Terabras" via CSS |
 | GLPI logo in the *About* dialog | replaced with the Terabras symbol via CSS |
-| **Modern reskin** (light airy side menu, softer radii/borders/shadows, refined cards/tables/buttons, light + dark) | `theme.css`, via Tabler `--tblr-*` + GLPI `--glpi-*` token overrides |
+| **Brand typeface — Kanit** (the official Terabras font, self-hosted) | `fonts.css` `@font-face` + `--tblr-font-sans-serif` |
+| **Brand-faithful theme** (navy chrome + orange accent, angular geometry, Kanit type, light + dark) | `theme.css`, via Tabler `--tblr-*` + GLPI `--glpi-*` token overrides |
 
-Brand palette: blue `#140078` (Pantone 2738 C) / orange `#FF7800` (Pantone 151 C).
-Design direction: clean modern SaaS ("Linear/Notion").
+Everything here follows the official identity manual (Renato AB Studio, 2025),
+not a generic interpretation:
 
-Two stylesheets load in order: `branding.css` (identity) then `theme.css` (the
-reskin, which owns the chrome look). Neither touches core.
+- **Typeface:** Kanit (Light→Bold), self-hosted & Latin-subset in `public/fonts/`.
+- **Palette:** navy `#140078` (Pantone 2738 C) dominant, orange `#FF7800`
+  (Pantone 151 C) as the single accent; near-black navy `#0F0F38` for deep
+  surfaces; greys `#E6E6EA` / `#C4C4C4`; white.
+- **Geometry:** angular — small radii, right angles, orange accent-marks (the
+  active side-menu item gets the brand's orange bar). No soft/pill shapes.
+- **Chrome:** navy navigation region + white content + orange emphasis, mirroring
+  the brand's own website/app mockups.
+
+Three stylesheets load in order: `fonts.css` (Kanit) → `branding.css` (identity:
+logos/colors/name) → `theme.css` (typography, geometry, chrome). None touch core.
 
 ## Files
 
@@ -27,10 +37,14 @@ reskin, which owns the chrome look). Neither touches core.
 terabras/
 ├── setup.php                 # hooks: app_name + CSS injection
 ├── public/
+│   ├── css/fonts.css         # Kanit @font-face (self-hosted)
 │   ├── css/branding.css      # logos + colors + login/footer
-│   ├── css/theme.css         # modern reskin (chrome, cards, tables, dark)
+│   ├── css/theme.css         # brand theme (Kanit, navy/orange, angular, dark)
+│   ├── fonts/                # Kanit *.woff2 (Latin subset) + OFL licence
 │   └── img/                  # generated logo assets (committed)
-└── tools/generate_logos.py   # regenerates public/img/ from the brand kit
+└── tools/
+    ├── generate_logos.py     # regenerates public/img/ from the brand kit
+    └── generate_fonts.sh     # regenerates public/fonts/ from Kanit.zip
 ```
 
 ## Enable

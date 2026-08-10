@@ -69,10 +69,10 @@ function plugin_init_terabras(): void
 
     $PLUGIN_HOOKS[Hooks::CSRF_COMPLIANT]['terabras'] = true;
 
-    // Stylesheets, in order: branding.css (identity: logos/colors/name) then
-    // theme.css (the modern reskin, which owns the chrome look).
-    $PLUGIN_HOOKS[Hooks::ADD_CSS]['terabras']                = ['css/branding.css', 'css/theme.css'];
-    $PLUGIN_HOOKS[Hooks::ADD_CSS_ANONYMOUS_PAGE]['terabras'] = ['css/branding.css', 'css/theme.css'];
+    // Stylesheets, in order: fonts.css (Kanit @font-face) → branding.css
+    // (identity: logos/colors/name) → theme.css (brand chrome/typography/geometry).
+    $PLUGIN_HOOKS[Hooks::ADD_CSS]['terabras']                = ['css/fonts.css', 'css/branding.css', 'css/theme.css'];
+    $PLUGIN_HOOKS[Hooks::ADD_CSS_ANONYMOUS_PAGE]['terabras'] = ['css/fonts.css', 'css/branding.css', 'css/theme.css'];
 
     // Product name — retitles pages, notification e-mails and the 2FA issuer.
     $PLUGIN_HOOKS[Hooks::POST_INIT]['terabras'] = 'plugin_terabras_postinit';

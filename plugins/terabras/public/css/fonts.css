@@ -1,0 +1,45 @@
+/*
+ * Terabras — Kanit, the brand typeface (SIL OFL 1.1, see fonts/Kanit-OFL.txt).
+ * Self-hosted & latin-subset (~28KB/weight) so it works offline and needs no
+ * external CDN. Loaded before branding.css/theme.css; those set it as the app
+ * font via --tblr-font-sans-serif.
+ *
+ * Absolute paths: this file is served from /plugins/terabras/css/, so a
+ * relative ../fonts/ would resolve correctly here, but we keep it absolute to
+ * match the logo-path convention used across the plugin (see branding.css).
+ */
+@font-face {
+    font-family: "Kanit";
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url("/plugins/terabras/fonts/kanit-Light.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Kanit";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/plugins/terabras/fonts/kanit-Regular.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Kanit";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/plugins/terabras/fonts/kanit-Medium.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Kanit";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/plugins/terabras/fonts/kanit-SemiBold.woff2") format("woff2");
+}
+@font-face {
+    font-family: "Kanit";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/plugins/terabras/fonts/kanit-Bold.woff2") format("woff2");
+}
