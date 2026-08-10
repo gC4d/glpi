@@ -1,24 +1,25 @@
 /*
  * Terabras — brand theme, faithful to the official identity manual
- * (Renato AB Studio, 2025). Loaded AFTER fonts.css + branding.css, so it owns
- * the chrome look. CSS-only, zero core edits: overrides Tabler (--tblr-*) and
- * GLPI (--glpi-*) custom properties plus a handful of component rules.
+ * (Renato AB Studio, 2025), rendered in a PREMIUM "Stripe / Vercel" register:
+ * real depth, layered elevation, subtle navy→transparent gradients and
+ * confident orange highlights — richer than the earlier minimalist pass, while
+ * still angular and on-brand.
+ *
+ * Loaded AFTER fonts.css + branding.css, so it owns the chrome look. CSS-only,
+ * zero core edits: overrides Tabler (--tblr-*) and GLPI (--glpi-*) custom
+ * properties plus a handful of component rules.
  *
  * Brand DNA (from the manual, not invented):
  *   · Typeface  : Kanit (Light→Bold).
  *   · Colors    : navy #140078 (Pantone 2738 C) dominant, orange #FF7800
- *                 (Pantone 151 C) as the single accent; near-black navy
- *                 #0F0F38 for deep surfaces; greys #E6E6EA / #C4C4C4; white.
- *   · Geometry  : ANGULAR, not soft — right angles, small radii, strategic
- *                 diagonal cuts, chevron (> <) and L-bracket accent marks.
- *                 (The old "Linear/Notion" soft-rounded light re-skin was
- *                 off-brand and has been replaced.)
- *   · Chrome    : navy nav region + white content region + orange emphasis,
- *                 exactly like the brand's own website/app mockups.
+ *                 (Pantone 151 C) as the accent; near-black navy #0F0F38 for
+ *                 deep surfaces; greys #E6E6EA / #C4C4C4; white.
+ *   · Geometry  : ANGULAR — right angles, small radii, orange accent-marks.
+ *   · Register  : premium SaaS — layered shadows, subtle gradients, generous
+ *                 but disciplined use of the brand colours for emphasis.
  *
  * Strategy: light default on :root; a real dark chrome under
- * [data-glpi-theme-dark="1"]. Brand color tokens live in branding.css; this
- * file shapes typography, geometry, and component styling.
+ * [data-glpi-theme-dark="1"]. Brand color tokens live in branding.css.
  */
 
 /* =================================================================== */
@@ -26,9 +27,11 @@
 /* =================================================================== */
 :root {
     --terabras-navy: #140078;
+    --terabras-navy-lift: #2417a0;   /* lighter navy for gradient tops */
     --terabras-navy-deep: #0f0f38;
     --terabras-navy-soft: #2f1d93;
     --terabras-orange: #ff7800;
+    --terabras-orange-deep: #e66d00;
     --terabras-grey-100: #e6e6ea;
     --terabras-grey-300: #c4c4c4;
 }
@@ -47,8 +50,6 @@ body,
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
-/* Kanit's uppercase is tall & geometric — give headings a touch more weight
-   and tighten tracking a hair, matching the manual's display usage. */
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6,
 .card-title, .navbar-brand {
@@ -58,7 +59,7 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /* =================================================================== */
-/* 2. Global design tokens — angular, high-contrast, quiet neutrals    */
+/* 2. Global tokens — angular geometry + premium layered elevation     */
 /* =================================================================== */
 :root {
     /* roundness — SHARP. The brand is built on right angles. */
@@ -69,28 +70,31 @@ h1, h2, h3, h4, h5, h6,
     --tblr-border-radius-2xl: 10px;
 
     /* surfaces: white content on a faint cool-grey canvas (brand greys) */
-    --tblr-body-bg: #f4f4f7;
+    --tblr-body-bg: #f3f3f8;
     --tblr-bg-surface: #ffffff;
-    --tblr-bg-surface-secondary: #f4f4f7;
-    --tblr-bg-surface-tertiary: #ececf1;
+    --tblr-bg-surface-secondary: #f3f3f8;
+    --tblr-bg-surface-tertiary: #eaeaf1;
     --tblr-bg-forms: #ffffff;
-    --tblr-border-color: #e2e2ea;
+    --tblr-border-color: #e4e4ec;
     --tblr-border-color-translucent: rgba(15, 15, 56, .1);
 
-    /* elevation — crisp and shallow (angular brand, minimal blur) */
-    --tblr-box-shadow: 0 1px 2px rgba(15, 15, 56, .06), 0 1px 3px rgba(15, 15, 56, .08);
+    /* elevation — Stripe-style layered shadows (hairline ring + soft depth) */
     --tblr-box-shadow-sm: 0 1px 2px rgba(15, 15, 56, .06);
-    --tblr-box-shadow-card: 0 1px 2px rgba(15, 15, 56, .06), 0 1px 3px rgba(15, 15, 56, .08);
+    --tblr-box-shadow: 0 1px 2px rgba(15, 15, 56, .05), 0 4px 12px -2px rgba(15, 15, 56, .08);
+    --tblr-box-shadow-card: 0 0 0 1px rgba(15, 15, 56, .03), 0 2px 4px rgba(15, 15, 56, .04), 0 10px 26px -8px rgba(15, 15, 56, .12);
+    --tblr-box-shadow-lg: 0 4px 8px rgba(15, 15, 56, .06), 0 18px 40px -12px rgba(15, 15, 56, .18);
 
     --tblr-body-color: #1c1c2b;
 }
 
 body {
     font-feature-settings: "ss01";
+    /* barely-there canvas gradient so the white cards read as elevated */
+    background: linear-gradient(180deg, #f5f5f9 0%, #eeeef4 100%) fixed;
 }
 
 /* =================================================================== */
-/* 2b. Dark scope — deep brand navy chrome + white logo                */
+/* 2b. Dark scope — deep brand navy chrome                             */
 /* =================================================================== */
 :root[data-glpi-theme-dark="1"] {
     --tblr-body-bg: #08081f;
@@ -98,21 +102,30 @@ body {
     --tblr-bg-surface-secondary: #171745;
     --tblr-bg-surface-tertiary: #1e1e52;
     --tblr-bg-forms: #12123a;
-    --tblr-border-color: #26265e;
+    --tblr-border-color: #2a2a63;
     --tblr-border-color-translucent: rgba(255, 255, 255, .1);
-    --tblr-box-shadow: 0 1px 2px rgba(0, 0, 0, .35);
-    --tblr-box-shadow-card: 0 1px 2px rgba(0, 0, 0, .35);
+    --tblr-box-shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+    --tblr-box-shadow: 0 2px 6px rgba(0, 0, 0, .45);
+    --tblr-box-shadow-card: 0 0 0 1px rgba(255, 255, 255, .04), 0 2px 4px rgba(0, 0, 0, .4), 0 10px 26px -8px rgba(0, 0, 0, .55);
+    --tblr-box-shadow-lg: 0 18px 40px -12px rgba(0, 0, 0, .6);
     --tblr-body-color: #e9e9f2;
+}
+:root[data-glpi-theme-dark="1"] body {
+    background: linear-gradient(180deg, #0a0a26 0%, #06061a 100%) fixed;
 }
 
 /* =================================================================== */
-/* 3. Sidebar — navy chrome (brand signature), orange active accent    */
-/*    branding.css sets --glpi-mainmenu-bg navy; here we shape it and   */
-/*    add the orange L-accent the brand uses to mark the active state.  */
+/* 3. Sidebar — navy chrome with a subtle top-lit gradient             */
 /* =================================================================== */
 .sidebar,
 .navbar-vertical {
-    box-shadow: none !important;
+    background: linear-gradient(180deg, #1a0d90 0%, var(--terabras-navy) 42%, #0d0a44 100%) !important;
+    box-shadow: 1px 0 0 rgba(255, 255, 255, .04), 4px 0 24px -8px rgba(15, 15, 56, .5) !important;
+    border-right: none !important;
+}
+:root[data-glpi-theme-dark="1"] .sidebar,
+:root[data-glpi-theme-dark="1"] .navbar-vertical {
+    background: linear-gradient(180deg, #16123f 0%, #0e0b33 55%, #08081f 100%) !important;
 }
 .sidebar .nav-item {
     margin: 1px 8px;
@@ -121,20 +134,19 @@ body {
     border-radius: 4px;
     font-weight: 500;
     position: relative;
-    transition: background-color .12s ease, color .12s ease;
+    transition: background-color .12s ease, color .12s ease, box-shadow .12s ease;
 }
 .sidebar .nav-link:hover {
-    background: rgba(255, 255, 255, .08);
+    background: rgba(255, 255, 255, .09);
     color: #ffffff;
 }
-/* active item: subtle lighter-navy fill + a solid orange left bar (the
-   brand's accent-mark language applied to navigation) */
+/* active item: lighter-navy fill + a solid orange left bar (brand accent-mark) */
 .sidebar .nav-item.active > .nav-link,
 .sidebar .nav-link.active,
 .sidebar .nav-link.show {
-    background: rgba(255, 255, 255, .12);
+    background: rgba(255, 255, 255, .13);
     color: #ffffff;
-    box-shadow: inset 3px 0 0 var(--terabras-orange);
+    box-shadow: inset 3px 0 0 var(--terabras-orange), 0 1px 3px rgba(0, 0, 0, .2);
 }
 .sidebar .navbar-brand {
     padding-top: 12px;
@@ -142,28 +154,29 @@ body {
 }
 
 /* =================================================================== */
-/* 4. Top bar — white, sits against the navy sidebar                   */
+/* 4. Top bar — white with crisp depth against the navy sidebar        */
 /* =================================================================== */
 .page > header.navbar,
 .navbar-search {
     background: var(--tblr-bg-surface);
-    box-shadow: none !important;
-    border-bottom: 1px solid var(--tblr-border-color);
+    box-shadow: 0 1px 0 var(--tblr-border-color), 0 4px 16px -6px rgba(15, 15, 56, .12) !important;
+    border-bottom: none;
 }
 .secondary-bar {
-    box-shadow: none !important;
-    border-bottom: 1px solid var(--tblr-border-color);
+    box-shadow: 0 1px 0 var(--tblr-border-color) !important;
+    border-bottom: none;
     background: var(--tblr-bg-surface);
 }
 
 /* =================================================================== */
-/* 5. Cards — sharp corners, crisp hairline, orange accent on headers  */
+/* 5. Cards — elevated panels with a hairline ring and soft depth      */
 /* =================================================================== */
 .card {
     --tblr-card-border-radius: 6px;
     --tblr-card-cap-bg: var(--tblr-bg-surface) !important;
-    border-color: var(--tblr-border-color);
-    box-shadow: var(--tblr-box-shadow);
+    border-color: transparent;
+    box-shadow: var(--tblr-box-shadow-card);
+    transition: box-shadow .16s ease, transform .16s ease;
 }
 .card > .card-header,
 .card > .card-status-top + .card-header {
@@ -175,7 +188,7 @@ body {
 }
 
 /* =================================================================== */
-/* 6. Tables — uppercase geometric headers (Kanit reads great in caps) */
+/* 6. Tables — uppercase geometric headers                             */
 /* =================================================================== */
 .table {
     --tblr-table-border-color: var(--tblr-border-color);
@@ -189,27 +202,41 @@ body {
 }
 
 /* =================================================================== */
-/* 7. Buttons — angular, Kanit medium; primary navy, accent orange     */
+/* 7. Buttons — angular, with premium depth; navy primary / orange CTA */
 /* =================================================================== */
 .btn {
     font-weight: 500;
     border-radius: 4px;
     letter-spacing: .005em;
+    transition: background .14s ease, box-shadow .14s ease, transform .06s ease;
+}
+.btn:active {
+    transform: translateY(.5px);
 }
 .btn-primary {
-    box-shadow: none;
+    background: linear-gradient(180deg, var(--terabras-navy-lift) 0%, var(--terabras-navy) 100%);
+    border-color: var(--terabras-navy);
+    box-shadow: 0 1px 2px rgba(15, 15, 56, .3), inset 0 1px 0 rgba(255, 255, 255, .12);
 }
-/* Orange is the brand's call-to-action colour. Map Tabler's warning/orange
-   utilities to the exact brand orange so accent buttons are on-tone. */
+.btn-primary:hover {
+    background: linear-gradient(180deg, #2c1eb8 0%, #1a0d90 100%);
+    border-color: #1a0d90;
+    box-shadow: 0 2px 8px rgba(20, 0, 120, .35), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+/* Orange is the brand call-to-action colour — map Tabler's orange utilities. */
 .btn-warning,
 .btn-orange {
-    --tblr-btn-bg: var(--terabras-orange);
-    --tblr-btn-border-color: var(--terabras-orange);
     --tblr-btn-color: #ffffff;
-    --tblr-btn-hover-bg: #e66d00;
-    --tblr-btn-hover-border-color: #e66d00;
     --tblr-btn-color-hover: #ffffff;
-    --tblr-btn-active-bg: #cc6100;
+    background: linear-gradient(180deg, #ff8a1f 0%, var(--terabras-orange) 100%);
+    border-color: var(--terabras-orange);
+    box-shadow: 0 1px 2px rgba(230, 109, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .2);
+}
+.btn-warning:hover,
+.btn-orange:hover {
+    background: linear-gradient(180deg, var(--terabras-orange) 0%, var(--terabras-orange-deep) 100%);
+    border-color: var(--terabras-orange-deep);
+    color: #ffffff;
 }
 .form-control:focus,
 .form-select:focus,
@@ -237,32 +264,29 @@ a:not(.btn):not(.nav-link):not(.page-link):not(.dropdown-item):hover {
 }
 
 /* =================================================================== */
-/* 9. Dashboard big-number tiles                                       */
+/* 9. Dashboard big-number tiles — premium KPI cards                   */
 /*    GLPI colors each tile via a per-id rule (#bn_xxx{background}).    */
-/*    Calm them into uniform white cards with a navy value and a single */
-/*    subtle ORANGE watermark icon — the brand's one-accent rule.      */
+/*    We give them real depth: a faint navy-tinted gradient, a layered  */
+/*    shadow, a thin orange top accent (the brand's highlight stripe),  */
+/*    a navy value, and an orange watermark icon that lifts on hover.   */
 /* =================================================================== */
 .dashboard .card.big-number {
-    background-color: var(--tblr-bg-surface) !important;
+    background: linear-gradient(158deg, #ffffff 0%, #f4f4fa 100%) !important;
     color: var(--tblr-body-color) !important;
-    border: 1px solid var(--tblr-border-color) !important;
+    border: none !important;
+    border-top: 2px solid var(--terabras-orange) !important;
     border-radius: 6px !important;
-    box-shadow: var(--tblr-box-shadow);
-    transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
+    box-shadow: var(--tblr-box-shadow-card) !important;
+    transition: box-shadow .16s ease, transform .16s ease;
 }
 .dashboard .card.big-number:hover {
-    box-shadow: 0 4px 12px rgba(15, 15, 56, .1), 0 2px 4px rgba(15, 15, 56, .06);
-    transform: translateY(-1px);
-    border-color: color-mix(in srgb, var(--terabras-navy) 30%, var(--tblr-border-color)) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 15, 56, .12), 0 14px 34px -10px rgba(20, 0, 120, .22) !important;
 }
 .dashboard .card.big-number .number,
 .dashboard .card.big-number .suffix {
     color: var(--terabras-navy) !important;
     font-weight: 600;
-}
-:root[data-glpi-theme-dark="1"] .dashboard .card.big-number .number,
-:root[data-glpi-theme-dark="1"] .dashboard .card.big-number .suffix {
-    color: #ffffff !important;
 }
 .dashboard .card.big-number .label {
     color: var(--tblr-secondary) !important;
@@ -270,15 +294,28 @@ a:not(.btn):not(.nav-link):not(.page-link):not(.dropdown-item):hover {
 }
 .dashboard .card.big-number .main-icon {
     color: var(--terabras-orange) !important;
-    opacity: .18 !important;
+    opacity: .9 !important;
+    background: linear-gradient(180deg, #ff8a1f, var(--terabras-orange));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgba(255, 120, 0, .25));
+}
+/* Dark scope: navy-glass tiles, white value, orange accent kept */
+:root[data-glpi-theme-dark="1"] .dashboard .card.big-number {
+    background: linear-gradient(158deg, #17174a 0%, #101036 100%) !important;
+}
+:root[data-glpi-theme-dark="1"] .dashboard .card.big-number .number,
+:root[data-glpi-theme-dark="1"] .dashboard .card.big-number .suffix {
+    color: #ffffff !important;
 }
 
-/* Chart widgets: GLPI leaves them a fixed light bg (looks wrong in dark).
-   Neutralize to the theme surface so they belong in both light and dark. */
+/* Chart widgets: neutralize GLPI's fixed light bg so they belong in both
+   themes, and give them the same elevated-panel treatment. */
 .dashboard .card.g-chart {
-    background-color: var(--tblr-bg-surface) !important;
+    background: var(--tblr-bg-surface) !important;
     color: var(--tblr-body-color) !important;
-    border: 1px solid var(--tblr-border-color) !important;
+    border: none !important;
     border-radius: 6px !important;
-    box-shadow: var(--tblr-box-shadow);
+    box-shadow: var(--tblr-box-shadow-card) !important;
 }

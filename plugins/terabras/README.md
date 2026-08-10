@@ -27,6 +27,9 @@ not a generic interpretation:
   active side-menu item gets the brand's orange bar). No soft/pill shapes.
 - **Chrome:** navy navigation region + white content + orange emphasis, mirroring
   the brand's own website/app mockups.
+- **Register:** premium SaaS ("Stripe / Vercel") — layered elevation, subtle
+  navy gradients, gradient-depth buttons, and KPI tiles with an orange highlight
+  stripe. Confident use of the brand colours for emphasis, not a flat minimal look.
 
 Three stylesheets load in order: `fonts.css` (Kanit) → `branding.css` (identity:
 logos/colors/name) → `theme.css` (typography, geometry, chrome). None touch core.
