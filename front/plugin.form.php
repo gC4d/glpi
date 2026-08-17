@@ -48,6 +48,21 @@ $plugin = new Plugin();
 $id     = isset($_POST['id']) && is_numeric($_POST['id']) ? (int) $_POST['id'] : null;
 $action = $_POST['action'] ?? null;
 
+// Terabras white-label: the branding layer is part of the product and must not be
+// disabled, uninstalled or cleaned. Reject any such action targeting it. (It is also
+// hidden from the plugins list via the add_default_where hook in the plugin setup.)
+if (in_array($action, ['unactivate', 'uninstall', 'clean'], true) && $id) {
+    $target = new Plugin();
+    if ($target->getFromDB($id) && ($target->fields['directory'] ?? '') === 'terabras') {
+        Session::addMessageAfterRedirect(
+            __s('This component is part of the product and cannot be removed.'),
+            false,
+            ERROR
+        );
+        Html::back();
+    }
+}
+
 switch ($action) {
     case 'install':
     case 'activate':

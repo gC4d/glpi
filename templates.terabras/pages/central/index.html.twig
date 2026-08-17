@@ -1,0 +1,40 @@
+{#
+ # Terabras — product override of the central dashboard page.
+ # Shadows templates/pages/central/index.html.twig via the /templates.terabras seam
+ # (TemplateRenderer::prependPath). Only structural additions live here; the widget
+ # grid is still produced by central.display(). Visual polish is in the Terabras
+ # stylesheet (plugins/terabras/public/css/dashboard.css).
+ #
+ # Divergence note: this is a COPY of the upstream template. When GLPI changes the
+ # original, reconcile here deliberately. See TERABRAS_DIVERGENCE.md.
+ #}
+{% extends "layout/page_skeleton.html.twig" %}
+
+{% set title = central.getTypeName(1) %}
+{% set menu = ['central', 'central'] %}
+
+{% set tb_hour = "now"|date('G') %}
+{% if tb_hour < 12 %}
+    {% set tb_greeting = 'Bom dia' %}
+{% elseif tb_hour < 18 %}
+    {% set tb_greeting = 'Boa tarde' %}
+{% else %}
+    {% set tb_greeting = 'Boa noite' %}
+{% endif %}
+{% set tb_name = session('glpifriendlyname')|default(session('glpiname'))|default('')|split(' ')|first|capitalize %}
+
+{% block content %}
+    <div class="tb-hero">
+        <div class="tb-hero-text">
+            <div class="tb-hero-greeting">
+                {{ tb_greeting }}{% if tb_name %}, <span class="tb-hero-name">{{ tb_name }}</span>{% endif %}
+            </div>
+            <div class="tb-hero-sub">{{ "now"|date('l, d/m/Y') }}</div>
+        </div>
+        <div class="tb-hero-brand" aria-hidden="true">
+            <span class="tb-hero-mark"></span>
+        </div>
+    </div>
+
+    {% do central.display() %}
+{% endblock content %}

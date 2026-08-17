@@ -1,0 +1,909 @@
+/*
+ * Terabras — component layer.
+ *
+ * Detailed styling for GLPI's real component classes (Tabler + GLPI custom),
+ * per approved DS v0.1. Reads tokens from theme.css. Loaded after it.
+ * Targets verified class names: .nav-tabs, .alert-*, .search-results,
+ * .glpi-badge, .page-link, .select2-*, .timeline-content, .toast.
+ */
+
+/* =================================================================== */
+/* Tabs — a modern SEGMENTED CONTROL: pills on a sunk track, the active   */
+/* tab an elevated surface pill. Scoped to horizontal tab bars so vertical */
+/* item tabs keep their own layout.                                        */
+/* =================================================================== */
+.card-tabs.horizontal > .nav-tabs {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    background: var(--tb-sunk);
+    border: 1px solid var(--tb-line);
+    border-radius: 11px;
+    padding: 4px;
+    margin-bottom: 12px;
+    max-width: 100%;
+}
+.card-tabs.horizontal > .nav-tabs .nav-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    border: none !important;
+    border-radius: 8px;
+    padding: 7px 13px;
+    margin: 0;
+    color: var(--tb-muted);
+    font-weight: 600;
+    font-size: 13.5px;
+    line-height: 1.2;
+    white-space: nowrap;
+    transition: color .14s ease, background .14s ease, box-shadow .14s ease;
+}
+.card-tabs.horizontal > .nav-tabs .nav-link i.ti { opacity: .8; font-size: 1.05em; }
+.card-tabs.horizontal > .nav-tabs .nav-link:hover:not(.active) {
+    color: var(--tb-ink);
+    background: rgba(15, 15, 56, .05);
+}
+.card-tabs.horizontal > .nav-tabs .nav-link.active {
+    color: var(--tb-navy);
+    background: var(--tb-surface);
+    box-shadow: 0 1px 2px rgba(15, 15, 56, .1), inset 0 0 0 1px var(--tb-line);
+}
+.card-tabs.horizontal > .nav-tabs .nav-link.active i.ti {
+    color: var(--tb-orange);
+    opacity: 1;
+}
+:root[data-glpi-theme-dark="1"] .card-tabs.horizontal > .nav-tabs .nav-link.active {
+    background: var(--tb-surface-2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .5), inset 0 0 0 1px var(--tb-line-2);
+}
+:root[data-glpi-theme-dark="1"] .card-tabs.horizontal > .nav-tabs .nav-link:hover:not(.active) {
+    background: rgba(255, 255, 255, .05);
+}
+
+/* count badge inside tabs */
+.card-tabs .nav-link .badge.glpi-badge,
+.card-tabs .nav-link .glpi-badge {
+    background: rgba(15, 15, 56, .07);
+    color: var(--tb-muted);
+    font-weight: 600;
+    padding: 1px 7px;
+}
+.card-tabs .nav-link.active .badge.glpi-badge,
+.card-tabs .nav-link.active .glpi-badge {
+    background: var(--tb-orange-tint);
+    color: var(--tb-orange-deep);
+}
+
+/* the tab-content sits directly below the segmented bar (no doubled border) */
+.card-tabs.horizontal > .tab-content {
+    border-top: none;
+}
+
+/* Vertical item tabs (Computer/Ticket forms) — a proper navigation panel:
+   its own recessed surface + divider, dense rows, active row an elevated pill
+   with an orange rail. */
+.card-tabs.vertical {
+    gap: 0;
+    align-items: stretch;
+}
+.card-tabs.vertical > .nav-tabs {
+    gap: 2px;
+    border: none;
+    background: var(--tb-sunk);
+    border-inline-end: 1px solid var(--tb-line);
+    border-radius: 12px 0 0 12px;
+    padding: 10px 8px;
+    min-width: 214px;
+    align-content: flex-start;
+}
+.card-tabs.vertical > .nav-tabs .nav-link {
+    border: none !important;
+    border-radius: 9px;
+    padding: 8px 11px;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 1.25;
+    color: var(--tb-muted);
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    transition: color .14s ease, background .14s ease, box-shadow .14s ease;
+}
+.card-tabs.vertical > .nav-tabs .nav-link i.ti,
+.card-tabs.vertical > .nav-tabs .nav-link .ti {
+    opacity: .7;
+    font-size: 1.1rem;
+    width: 18px;
+    text-align: center;
+    flex: none;
+}
+.card-tabs.vertical > .nav-tabs .nav-link:hover:not(.active) {
+    background: color-mix(in srgb, var(--tb-surface) 60%, transparent);
+    color: var(--tb-ink);
+}
+.card-tabs.vertical > .nav-tabs .nav-link:hover:not(.active) i.ti { opacity: 1; }
+.card-tabs.vertical > .nav-tabs .nav-link.active {
+    background: var(--tb-surface);
+    color: var(--tb-navy);
+    font-weight: 600;
+    box-shadow: inset 3px 0 0 var(--tb-orange), 0 1px 2px rgba(15, 15, 56, .06), 0 6px 14px -8px rgba(15, 15, 56, .22);
+}
+.card-tabs.vertical > .nav-tabs .nav-link.active i.ti { color: var(--tb-orange); opacity: 1; }
+/* the content pane keeps the panel's rounded outer corners */
+.card-tabs.vertical > .tab-content { border-radius: 0 12px 12px 0; }
+:root[data-glpi-theme-dark="1"] .card-tabs.vertical > .nav-tabs .nav-link:hover:not(.active) {
+    background: rgba(255, 255, 255, .05);
+}
+:root[data-glpi-theme-dark="1"] .card-tabs.vertical > .nav-tabs .nav-link.active {
+    background: var(--tb-surface);
+    box-shadow: inset 3px 0 0 var(--tb-orange), 0 1px 2px rgba(0, 0, 0, .4);
+}
+
+/* =================================================================== */
+/* GLPI badge (tab counts / inline counters)                           */
+/* =================================================================== */
+.glpi-badge {
+    border-radius: 100px;
+    font-weight: 600;
+    background: var(--tb-sunk);
+    color: var(--tb-muted);
+}
+
+/* =================================================================== */
+/* Alerts — severity stripe on the leading edge                        */
+/* =================================================================== */
+.alert {
+    border: 1px solid var(--tb-line);
+    border-radius: 9px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--tb-e1);
+}
+.alert::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 3px;
+}
+.alert-success { background: var(--tb-ok-bg); color: var(--tb-ok); }
+.alert-success::before { background: var(--tb-ok); }
+.alert-info { background: var(--tb-info-bg); color: var(--tb-info); }
+.alert-info::before { background: var(--tb-navy); }
+.alert-warning { background: var(--tb-warn-bg); color: var(--tb-warn); }
+.alert-warning::before { background: var(--tb-warn); }
+.alert-danger { background: var(--tb-crit-bg); color: var(--tb-crit); }
+.alert-danger::before { background: var(--tb-crit); }
+.alert .alert-title { font-family: var(--tblr-font-sans-serif); font-weight: 600; }
+
+/* =================================================================== */
+/* Listing / search-results tables — modern data table                 */
+/* =================================================================== */
+/* card container: rounded, elevated, clips the table corners */
+.card.search-card,
+.card.datatable-card {
+    border: 1px solid var(--tb-line) !important;
+    border-radius: 14px !important;
+    box-shadow: var(--tb-e2) !important;
+    overflow: hidden;
+}
+/* toolbar header (Pesquisar / Ordenação / view + actions) */
+.card.search-card > .card-header {
+    background: var(--tb-surface);
+    border-bottom: 1px solid var(--tb-line);
+    padding: 9px 12px;
+    gap: 5px;
+    min-height: 0;
+}
+.card.search-card > .card-header .btn {
+    border-radius: 8px;
+    font-weight: 500;
+}
+.card.search-card > .card-header .btn-icon {
+    color: var(--tb-muted);
+    border-color: transparent;
+    background: transparent;
+}
+.card.search-card > .card-header .btn-icon:hover {
+    background: var(--tb-sunk);
+    color: var(--tb-navy);
+}
+
+/* table shell */
+.search-results.table,
+.datatable .table {
+    --tblr-table-border-color: var(--tb-line);
+    --tblr-table-striped-bg: transparent;
+    margin: 0;
+}
+/* header cells — quiet uppercase labels on a faint band */
+.search-results.table > thead > tr > th,
+.datatable .table > thead > tr > th {
+    background: var(--tb-surface-2);
+    color: var(--tb-muted);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 11px 14px;
+    border-top: none;
+    border-bottom: 1px solid var(--tb-line);
+    white-space: nowrap;
+}
+/* body cells — comfortable rows, hairline separators */
+.search-results.table > tbody > tr > td,
+.datatable .table > tbody > tr > td {
+    padding: 10px 14px;
+    border-top: none;
+    border-bottom: 1px solid var(--tb-line);
+    vertical-align: middle;
+    color: var(--tb-ink);
+}
+.search-results.table > tbody > tr:last-child > td,
+.datatable .table > tbody > tr:last-child > td { border-bottom: none; }
+/* very subtle zebra + a clear brand hover */
+.search-results.table > tbody > tr:nth-child(even),
+.datatable .table > tbody > tr:nth-child(even) {
+    background: color-mix(in srgb, var(--tb-sunk) 40%, transparent);
+}
+.search-results.table > tbody > tr:hover,
+.datatable .table > tbody > tr:hover,
+.table-hover > tbody > tr:hover {
+    background: color-mix(in srgb, var(--tb-orange) 7%, transparent) !important;
+}
+/* the row's primary link (the entity name) */
+.search-results.table td a:not(.btn),
+.datatable .table td a:not(.btn) {
+    font-weight: 600;
+    color: var(--tb-navy);
+}
+.search-results.table td a:not(.btn):hover,
+.datatable .table td a:not(.btn):hover { color: var(--tb-orange); }
+
+/* avatars → angular rounded squares (brand geometry) */
+.search-results .avatar,
+.datatable .avatar,
+td .avatar {
+    border-radius: 8px !important;
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+}
+
+/* footer / pagination band */
+.card.search-card > .card-footer {
+    background: var(--tb-surface-2);
+    border-top: 1px solid var(--tb-line);
+    padding: 8px 14px;
+}
+
+/* mass-select + sort emphasis */
+.massive_action_checkbox:checked {
+    background-color: var(--tb-navy);
+    border-color: var(--tb-navy);
+}
+.sort-indicator,
+th .ti-sort-ascending,
+th .ti-sort-descending {
+    color: var(--tb-orange);
+}
+
+/* =================================================================== */
+/* Pagination                                                          */
+/* =================================================================== */
+.page-link {
+    border-radius: 4px !important;
+    color: var(--tb-muted);
+    border-color: var(--tb-line-2);
+    font-weight: 600;
+    margin: 0 1px;
+}
+.page-item.active .page-link {
+    background: var(--tb-navy);
+    border-color: var(--tb-navy);
+    color: #fff;
+}
+.page-link:hover {
+    border-color: var(--tb-line-strong);
+    color: var(--tb-ink);
+}
+
+/* =================================================================== */
+/* Select2 — match native control geometry + brand focus              */
+/* =================================================================== */
+.select2-container--default .select2-selection {
+    border-color: var(--tb-line-strong) !important;
+    border-radius: 6px !important;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background: var(--tb-navy) !important;
+}
+.select2-dropdown {
+    border-color: var(--tb-line-strong);
+    border-radius: 6px;
+    box-shadow: var(--tb-e2);
+}
+
+/* =================================================================== */
+/* Dropdown menus                                                      */
+/* =================================================================== */
+.dropdown-menu {
+    border-color: var(--tb-line);
+    border-radius: 9px;
+    box-shadow: var(--tb-e2);
+    padding: 5px;
+}
+.dropdown-item {
+    border-radius: 5px;
+    font-weight: 500;
+}
+.dropdown-item.active,
+.dropdown-item:active {
+    background: var(--tb-navy);
+}
+.dropdown-item:hover:not(.active) {
+    background: var(--tb-sunk);
+}
+
+/* =================================================================== */
+/* Toasts (messages_after_redirect)                                    */
+/* =================================================================== */
+.toast {
+    border-radius: 9px;
+    box-shadow: var(--tb-e3);
+    border: 1px solid var(--tb-line);
+    overflow: hidden;
+}
+.toast .toast-header {
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+}
+
+/* =================================================================== */
+/* Modals — modern surface, blurred backdrop, smooth spring entrance    */
+/* =================================================================== */
+.modal-backdrop,
+.modal-backdrop.show {
+    background-color: rgba(10, 10, 30, .58) !important;
+    opacity: 1 !important;
+    backdrop-filter: blur(8px) saturate(1.15) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(1.15) !important;
+}
+/* spring the dialog in (scale + rise) instead of a plain slide/pop */
+.modal.fade .modal-dialog {
+    transform: translateY(24px) scale(.93) !important;
+    opacity: 0;
+    transition: transform .3s cubic-bezier(.34, 1.4, .5, 1), opacity .2s ease !important;
+}
+.modal.show .modal-dialog {
+    transform: none !important;
+    opacity: 1;
+}
+.modal-content {
+    border: 1px solid var(--tb-line);
+    border-radius: 16px;
+    box-shadow: 0 24px 60px -18px rgba(15, 15, 56, .5), 0 2px 6px rgba(15, 15, 56, .1);
+    overflow: hidden;
+    background: var(--tb-surface);
+}
+.modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--tb-line);
+    background: var(--tb-surface);
+}
+.modal-title {
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    font-size: 1.05rem;
+    letter-spacing: -.01em;
+    color: var(--tb-strong);
+}
+.modal-body { padding: 20px; }
+.modal-footer {
+    padding: 13px 20px;
+    border-top: 1px solid var(--tb-line);
+    gap: 8px;
+    background: var(--tb-surface-2);
+}
+/* close button → a clean rounded control */
+.modal-header .btn-close {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    opacity: .55;
+    transition: opacity .14s ease, background-color .14s ease;
+}
+.modal-header .btn-close:hover {
+    opacity: 1;
+    background-color: var(--tb-sunk);
+}
+/* while a modal body is still being filled by ajax, reserve height + center
+   any loader so it doesn't collapse-then-jump */
+.modal-body:empty { min-height: 120px; }
+.modal-body > .spinner-border,
+.modal-body > .text-center > .spinner-border { color: var(--tb-navy) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+    .modal.fade .modal-dialog { transition: none; transform: none; opacity: 1; }
+}
+
+/* =================================================================== */
+/* Top AJAX progress bar (feedback while modals / requests load)        */
+/* =================================================================== */
+.tb-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0;
+    background: linear-gradient(90deg, #ff8b24, var(--tb-orange));
+    box-shadow: 0 0 10px rgba(255, 120, 0, .55);
+    z-index: 100000;
+    opacity: 0;
+    pointer-events: none;
+    border-radius: 0 2px 2px 0;
+    transition: width .3s cubic-bezier(.1, .6, .3, 1), opacity .25s ease;
+}
+.tb-progress--active { opacity: 1; }
+.tb-progress--done { transition: width .18s ease, opacity .3s ease .08s; }
+
+/* =================================================================== */
+/* ITIL timeline — cleaner bubbles, orange accent on the tech reply     */
+/* =================================================================== */
+.itil-timeline .timeline-content.card {
+    border-radius: 8px;
+    box-shadow: var(--tb-e1);
+}
+.itil-timeline .timeline-item .avatar {
+    box-shadow: 0 0 0 2px var(--tb-surface), 0 2px 6px rgba(15, 15, 56, .18);
+}
+.itil-timeline .timeline-item .timeline-header .badge {
+    background: var(--tb-sunk);
+    color: var(--tb-muted);
+}
+
+/* =================================================================== */
+/* Form section headers (the ribboned card titles)                     */
+/* =================================================================== */
+.card-title .ribbon.ribbon-bookmark,
+.ribbon.ribbon-bookmark.bg-blue {
+    background: var(--tb-navy) !important;
+    color: #fff !important;
+}
+
+/* =================================================================== */
+/* Breadcrumb                                                          */
+/* =================================================================== */
+.breadcrumb .here,
+.breadcrumb-item.active {
+    color: var(--tb-navy);
+    font-weight: 600;
+}
+
+/* =================================================================== */
+/* Form field layout — labels ON TOP, consistent widths + rhythm.       */
+/* GLPI stacks label|field horizontally with right-aligned, ragged      */
+/* labels (looks scattered). We stack label above the field so every    */
+/* field reads as a clean, aligned block. Each .form-field stays a       */
+/* half-width Bootstrap column, so it's still 2 fields per row.          */
+/* =================================================================== */
+.form-field.row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    margin-bottom: 1rem;
+}
+.form-field.row > .col-form-label,
+.form-field.row > label.col-form-label {
+    flex: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    text-align: start !important;
+    justify-content: flex-start !important;
+    padding: 0 0 5px 1px !important;
+    margin: 0;
+    color: var(--tb-strong);
+    font-weight: 600;
+    font-size: .8rem;
+    letter-spacing: .01em;
+    line-height: 1.3;
+}
+.form-field.row > .field-container {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0;
+    padding: 0 1px !important;
+}
+.form-field .form-control,
+.form-field .form-select,
+.form-field .select2-container,
+.form-field .field-container > .flatpickr-input {
+    width: 100% !important;
+    max-width: 100%;
+}
+/* the ? help marker + required star */
+.form-field .form-help {
+    color: var(--tb-faint);
+    border-color: var(--tb-line-2);
+}
+.form-field .required { color: var(--tb-orange); font-weight: 700; }
+
+/* section title cards inside forms — quieter, branded rule */
+.card > .card-header > .card-title,
+.card > .card-header > .card-subtitle {
+    letter-spacing: -.01em;
+}
+/* GLPI's tinted "section" band (Informação de contato, etc.) */
+.form-field.field-label-secondary,
+tr.headerRow, .separator-header {
+    color: var(--tb-navy);
+}
+
+/* =================================================================== */
+/* Select2 & selects — modern, roomier dropdown                        */
+/* =================================================================== */
+.select2-container--default .select2-selection--single {
+    height: 38px;
+    display: flex;
+    align-items: center;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 1.4;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: var(--tb-muted) transparent transparent;
+}
+.select2-dropdown {
+    border: 1px solid var(--tb-line-strong);
+    border-radius: 8px;
+    box-shadow: var(--tb-e3);
+    overflow: hidden;
+    padding: 4px;
+}
+.select2-container--default .select2-results__option {
+    border-radius: 5px;
+    padding: 7px 10px;
+    font-size: .875rem;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background: var(--tb-navy) !important;
+    color: #fff;
+}
+.select2-container--default .select2-results__option[aria-selected="true"] {
+    background: var(--tb-orange-tint);
+    color: var(--tb-orange-deep);
+    font-weight: 600;
+}
+.select2-search--dropdown .select2-search__field {
+    border: 1px solid var(--tb-line-strong);
+    border-radius: 6px;
+    padding: 7px 9px;
+}
+.select2-search--dropdown .select2-search__field:focus {
+    border-color: var(--tb-orange);
+    box-shadow: var(--tb-ring);
+    outline: none;
+}
+
+/* =================================================================== */
+/* Tabs overflow / "more" dropdown — modern menu                       */
+/* =================================================================== */
+.nav-tabs .dropdown-menu,
+.card-tabs .dropdown-menu {
+    border: 1px solid var(--tb-line);
+    border-radius: 10px;
+    box-shadow: var(--tb-e3);
+    padding: 6px;
+    min-width: 220px;
+}
+.nav-tabs .dropdown-menu .dropdown-item,
+.card-tabs .dropdown-menu .dropdown-item {
+    border-radius: 6px;
+    padding: 8px 11px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.nav-tabs .dropdown-menu .dropdown-item.active,
+.nav-tabs .dropdown-menu .dropdown-item:hover:not(.active) {
+    background: var(--tb-sunk);
+    color: var(--tb-navy);
+}
+.nav-tabs .nav-link.dropdown-toggle {
+    color: var(--tb-muted);
+}
+
+/* =================================================================== */
+/* Dark-mode legibility — our brand navy (--tb-navy #140078) used as    */
+/* TEXT is too dark on the dark surface; lift those specific spots to a  */
+/* periwinkle. (Backgrounds/borders that want real navy are unaffected.) */
+/* =================================================================== */
+:root[data-glpi-theme-dark="1"] .search-results.table td a:not(.btn),
+:root[data-glpi-theme-dark="1"] .datatable .table td a:not(.btn),
+:root[data-glpi-theme-dark="1"] .card-tabs.horizontal > .nav-tabs .nav-link.active,
+:root[data-glpi-theme-dark="1"] .card-tabs.vertical > .nav-tabs .nav-link.active {
+    color: #8f80ff !important;
+}
+:root[data-glpi-theme-dark="1"] .breadcrumb .here,
+:root[data-glpi-theme-dark="1"] .breadcrumb-item.active,
+:root[data-glpi-theme-dark="1"] .card-tabs .nav-link.active .glpi-badge {
+    color: #c7c9ff;
+}
+
+/* =================================================================== */
+/* Planning / FullCalendar (v4) — modern calendar                       */
+/* =================================================================== */
+/* toolbar view buttons → clean segmented control */
+.fc .fc-button.fc-button-primary {
+    background: var(--tb-surface);
+    border: 1px solid var(--tb-line-strong);
+    color: var(--tb-strong);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.3;
+    border-radius: 8px;
+    padding: 6px 13px;
+    text-transform: none;
+    text-shadow: none;
+    box-shadow: none;
+    transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+.fc .fc-button.fc-button-primary:hover {
+    background: var(--tb-sunk);
+    color: var(--tb-navy);
+    border-color: var(--tb-line-strong);
+}
+.fc .fc-button.fc-button-primary:focus { box-shadow: var(--tb-ring); }
+.fc .fc-button.fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button.fc-button-primary:not(:disabled):active {
+    background: var(--tb-navy);
+    border-color: var(--tb-navy);
+    color: #fff;
+    box-shadow: none;
+}
+.fc .fc-button.fc-button-primary:disabled {
+    background: var(--tb-sunk);
+    border-color: var(--tb-line);
+    color: var(--tb-faint);
+    opacity: 1;
+}
+/* group the buttons seamlessly */
+.fc .fc-button-group > .fc-button { border-radius: 0; margin: 0; }
+.fc .fc-button-group > .fc-button:first-child { border-radius: 8px 0 0 8px; }
+.fc .fc-button-group > .fc-button:last-child { border-radius: 0 8px 8px 0; }
+.fc .fc-button-group > .fc-button:not(:first-child) { border-left-color: transparent; }
+.fc .fc-button-group > .fc-button.fc-button-active { z-index: 1; position: relative; }
+/* the "Hoje" / prev / next */
+.fc .fc-today-button { border-radius: 8px; }
+
+/* the current range title */
+.fc .fc-toolbar h2 {
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: -.01em;
+    color: var(--tb-strong);
+}
+
+/* grid: whisper-thin borders (Google Calendar keeps the grid nearly invisible) */
+.fc-unthemed td,
+.fc-unthemed th,
+.fc-unthemed thead,
+.fc-unthemed tbody,
+.fc-unthemed .fc-divider,
+.fc-unthemed .fc-row,
+.fc-unthemed .fc-popover {
+    border-color: color-mix(in srgb, var(--tb-line) 62%, transparent) !important;
+}
+/* day column headers → airy, white, no grey band; day name small + muted */
+.fc .fc-day-header {
+    padding: 9px 4px;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: .015em;
+    color: var(--tb-muted);
+    background: transparent;
+    border-bottom: 1px solid var(--tb-line) !important;
+}
+.fc .fc-day-header.fc-today { color: var(--tb-navy); }
+/* time axis labels → small, faint, lifted to sit ON the hour gridline */
+.fc .fc-axis,
+.fc .fc-time-grid .fc-slats td { color: var(--tb-faint); }
+.fc .fc-axis.fc-time { font-size: 10px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.fc .fc-axis.fc-time span {
+    display: inline-block;
+    position: relative;
+    top: -.75em;               /* lift label to the line, Google-style */
+    padding-right: 9px;
+    color: var(--tb-faint);
+}
+
+/* today column → a whisper of tint (not a solid block) + a marked header */
+.fc-unthemed .fc-today,
+.fc .fc-day-top.fc-today {
+    background: rgba(255, 120, 0, .04) !important;
+}
+.fc .fc-day-header.fc-today {
+    background: var(--tb-orange-tint) !important;
+    box-shadow: inset 0 -2px 0 var(--tb-orange) !important;
+    color: var(--tb-navy) !important;
+    font-weight: 700;
+}
+/* half-hour (minor) lines removed entirely; only hour lines remain (Google) */
+.fc-unthemed .fc-minor td { border-top-color: transparent !important; }
+/* tighter hour rows — less empty vertical space */
+.fc .fc-time-grid .fc-slats td { height: 1.3em; }
+/* the all-day row */
+.fc-unthemed .fc-divider { background: var(--tb-surface-2) !important; }
+/* the whole calendar rounded, framed */
+.fc.fc-unthemed {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--tb-line);
+    background: var(--tb-surface);
+}
+/* now indicator → orange line with a dot at the left edge */
+.fc .fc-now-indicator-line {
+    border-color: var(--tb-orange) !important;
+    border-top-width: 2px;
+    position: relative;
+}
+.fc .fc-now-indicator-line::before {
+    content: "";
+    position: absolute;
+    left: -1px;
+    top: -5px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--tb-orange);
+    box-shadow: 0 0 0 2px var(--tb-surface);
+}
+.fc .fc-now-indicator-arrow { display: none; }
+
+/* events → rounded, soft depth */
+.fc .fc-event,
+.fc .fc-event-dot {
+    border: none;
+    border-radius: 6px;
+    padding: 1px 5px;
+    font-size: 12px;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(15, 15, 56, .18);
+}
+.fc .fc-event .fc-title, .fc .fc-event .fc-time { font-weight: 500; }
+
+/* the planning filters sidebar panel bands (Filtros / Planejamentos) */
+.planning-view .filters_toolbar,
+.planning-filters .card-header,
+.rack_side_block_content .card-header {
+    background: var(--tb-surface-2);
+}
+
+/* Planning filters sidebar — chips instead of chunky native color blocks */
+ul.filters {
+    padding: 4px;
+    margin: 0;
+    list-style: none;
+}
+.event_filter {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    margin: 1px 0;
+    transition: background .12s ease;
+}
+.event_filter:hover { background: var(--tb-sunk); }
+.event_filter > .form-check-input { margin: 0; flex: none; }
+.event_filter > .form-label {
+    margin: 0;
+    flex: 1;
+    font-weight: 500;
+    font-size: 13.5px;
+    color: var(--tb-strong);
+    cursor: pointer;
+}
+/* the native <input type="color"> → a small rounded colour chip */
+.color_input input[type="color"],
+input[type="color"][name$="_color"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    padding: 0;
+    border: 1px solid var(--tb-line-strong);
+    border-radius: 6px;
+    background: none;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(15, 15, 56, .15);
+    vertical-align: middle;
+}
+.color_input input[type="color"]::-webkit-color-swatch-wrapper,
+input[type="color"][name$="_color"]::-webkit-color-swatch-wrapper { padding: 0; }
+.color_input input[type="color"]::-webkit-color-swatch,
+input[type="color"][name$="_color"]::-webkit-color-swatch { border: none; border-radius: 5px; }
+.color_input input[type="color"]::-moz-color-swatch,
+input[type="color"][name$="_color"]::-moz-color-swatch { border: none; border-radius: 5px; }
+
+/* Planning filter panel headers (Filtros / Planejamentos) → clean, not lavender */
+#planning_filter h3 {
+    background: var(--tb-surface-2) !important;
+    color: var(--tb-navy);
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    font-size: .78rem;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 9px 12px;
+    margin: 4px 0 6px;
+    border-radius: 8px;
+    border: 1px solid var(--tb-line);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+#planning_filter h3 .ti,
+#planning_filter h3 i { color: var(--tb-muted); }
+:root[data-glpi-theme-dark="1"] #planning_filter h3 { color: #8f80ff; }
+
+/* =================================================================== */
+/* Form parts inside modals/forms — file dropzone + rich-text editor    */
+/* =================================================================== */
+/* file upload → a modern dashed dropzone */
+.fileupload.draghoverable {
+    border: 1.5px dashed var(--tb-line-strong);
+    border-radius: 12px;
+    background: var(--tb-surface-2);
+    padding: 16px 18px;
+    transition: border-color .15s ease, background .15s ease;
+}
+.fileupload.draghoverable.dragheart,
+.fileupload.draghoverable.hover,
+.fileupload.draghoverable:hover {
+    border-color: var(--tb-orange);
+    background: var(--tb-orange-tint);
+}
+.fileupload .fileupload_info,
+.fileupload .draghovermessage { color: var(--tb-muted); }
+.fileupload input[type="file"]::file-selector-button,
+.fileupload .btn {
+    border-radius: 8px;
+    background: var(--tb-surface);
+    border: 1px solid var(--tb-line-strong);
+    color: var(--tb-navy);
+    font-weight: 600;
+}
+.fileupload input[type="file"]::file-selector-button:hover { background: var(--tb-sunk); }
+
+/* TinyMCE (v6, .tox) → match the product chrome */
+.tox.tox-tinymce {
+    border: 1px solid var(--tb-line-strong) !important;
+    border-radius: 9px !important;
+    overflow: hidden;
+}
+.tox .tox-editor-header,
+.tox .tox-toolbar,
+.tox .tox-toolbar__primary,
+.tox .tox-toolbar-overlord {
+    background: var(--tb-surface-2) !important;
+    border-color: var(--tb-line) !important;
+    box-shadow: none !important;
+}
+.tox .tox-tbtn { border-radius: 6px !important; }
+.tox .tox-tbtn:hover { background: var(--tb-sunk) !important; }
+.tox .tox-tbtn--enabled,
+.tox .tox-tbtn--enabled:hover { background: var(--tb-orange-tint) !important; color: var(--tb-orange-deep) !important; }
+.tox .tox-edit-area__iframe { background: var(--tb-surface) !important; }
+.tox:not(.tox-tinymce-inline) .tox-editor-header { border-bottom: 1px solid var(--tb-line) !important; }
+
+/* the ribboned section header ("Novo item …") — calm the bookmark */
+.ribbon.ribbon-bookmark {
+    background: var(--tb-navy) !important;
+    color: #fff !important;
+}

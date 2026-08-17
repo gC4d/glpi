@@ -74,6 +74,14 @@ class TemplateRenderer
 
         $loader = new FilesystemLoader($rootdir . '/templates', $rootdir);
 
+        // Terabras product override: templates placed in `/templates.terabras` shadow
+        // their core counterparts (same logical name, no `@namespace`). This is the single
+        // seam that lets the product redesign core screens by copy-and-edit while keeping
+        // the entire UI divergence isolated to one directory (see TERABRAS_DIVERGENCE.md).
+        if (is_dir($rootdir . '/templates.terabras')) {
+            $loader->prependPath($rootdir . '/templates.terabras');
+        }
+
         $active_plugins = Plugin::getPlugins();
         foreach ($active_plugins as $plugin_key) {
             // Add a dedicated namespace for each active plugin, so templates would be loadable using

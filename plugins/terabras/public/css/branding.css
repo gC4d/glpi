@@ -36,6 +36,16 @@
     width: 150px !important;
 }
 
+/* Collapsed menu: GLPI swaps to the reduced (square) symbol at 40×40 centered.
+   Our wide-wordmark width above would otherwise force 150px and push the symbol
+   out of the narrow rail — restore the reduced-symbol geometry when collapsed. */
+body.navbar-collapsed .page .glpi-logo {
+    width: 40px !important;
+    height: 40px !important;
+    background-image: var(--glpi-logo-reduced) !important;
+    background-position: center !important;
+}
+
 /* Login screen logo uses `content:` (a replaced image) — keep aspect ratio. */
 .page-anonymous .glpi-logo {
     object-fit: contain;
@@ -106,4 +116,22 @@ img[title="GLPI Logo"] {
     content: url("/plugins/terabras/img/symbol-blue.png");
     max-width: 96px;
     height: auto;
+}
+
+/* The dashboard FULLSCREEN mode uses a separate, hardcoded logo element
+   (span.glpi_logo — underscore, not the themed .glpi-logo) pointing at a GLPI
+   image. Swap it for the Terabras wordmark (navy on the light fullscreen bg,
+   white under dark mode). */
+.dashboard .glpi_logo,
+span.glpi_logo {
+    background-image: url("/plugins/terabras/img/wordmark-blue.png") !important;
+    background-size: contain !important;
+    background-position: left center !important;
+    background-repeat: no-repeat !important;
+    width: 140px !important;
+    margin-inline-end: 20px !important;
+}
+:root[data-glpi-theme-dark="1"] .dashboard .glpi_logo,
+:root[data-glpi-theme-dark="1"] span.glpi_logo {
+    background-image: url("/plugins/terabras/img/wordmark-white.png") !important;
 }

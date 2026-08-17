@@ -69,13 +69,54 @@ function plugin_init_terabras(): void
 
     $PLUGIN_HOOKS[Hooks::CSRF_COMPLIANT]['terabras'] = true;
 
-    // Stylesheets, in order: fonts.css (Kanit @font-face) → branding.css
-    // (identity: logos/colors/name) → theme.css (brand chrome/typography/geometry).
-    $PLUGIN_HOOKS[Hooks::ADD_CSS]['terabras']                = ['css/fonts.css', 'css/branding.css', 'css/theme.css'];
-    $PLUGIN_HOOKS[Hooks::ADD_CSS_ANONYMOUS_PAGE]['terabras'] = ['css/fonts.css', 'css/branding.css', 'css/theme.css'];
+    // Stylesheets, in order: fonts.css (Kanit @font-face) → branding.css (identity)
+    // → theme.css (tokens/chrome) → components.css (component detail) → dashboard.css.
+    //
+    // GLPI cache-busts plugin assets with the plugin *version* (fixed), so edits to
+    // these files wouldn't reach browsers until a version bump / hard-refresh. We append
+    // our own `?r=<max mtime>` so every CSS edit changes the URL and browsers refetch.
+    $css_files = ['fonts', 'branding', 'theme', 'components', 'dashboard'];
+    $css_bust  = 0;
+    foreach ($css_files as $f) {
+        $mtime = @filemtime(__DIR__ . '/public/css/' . $f . '.css');
+        if ($mtime !== false && $mtime > $css_bust) {
+            $css_bust = $mtime;
+        }
+    }
+    $q = '?r=' . $css_bust;
+    $PLUGIN_HOOKS[Hooks::ADD_CSS]['terabras']                = ['css/fonts.css' . $q, 'css/branding.css' . $q, 'css/theme.css' . $q, 'css/components.css' . $q, 'css/dashboard.css' . $q];
+    $PLUGIN_HOOKS[Hooks::ADD_CSS_ANONYMOUS_PAGE]['terabras'] = ['css/fonts.css' . $q, 'css/branding.css' . $q, 'css/theme.css' . $q];
+
+    // Plugin JS: dark-mode toggle first (applies early to cut flash), then the
+    // ECharts restyling (dashboard charts are canvas, so JS not CSS).
+    $dm_mtime = @filemtime(__DIR__ . '/public/js/darkmode.js') ?: 0;
+    $ux_mtime = @filemtime(__DIR__ . '/public/js/ux.js') ?: 0;
+    $js_mtime = @filemtime(__DIR__ . '/public/js/charts.js') ?: 0;
+    $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['terabras'] = [
+        'js/darkmode.js?r=' . $dm_mtime,
+        'js/ux.js?r=' . $ux_mtime,
+        'js/charts.js?r=' . $js_mtime,
+    ];
 
     // Product name — retitles pages, notification e-mails and the 2FA issuer.
     $PLUGIN_HOOKS[Hooks::POST_INIT]['terabras'] = 'plugin_terabras_postinit';
+
+    // White-label hardening: hide Terabras from the plugins management list so
+    // the branding layer isn't visible as a removable plugin. (Uninstall/disable
+    // is additionally blocked server-side in front/plugin.form.php.)
+    $PLUGIN_HOOKS[Hooks::ADD_DEFAULT_WHERE]['terabras'] = 'plugin_terabras_add_default_where';
+}
+
+/**
+ * Exclude the Terabras plugin from the Plugin search list (white-label).
+ * Receives [$itemtype, $criteria] from the add_default_where hook.
+ */
+function plugin_terabras_add_default_where($params)
+{
+    if (is_array($params) && ($params[0] ?? null) === 'Plugin') {
+        $params[1][] = new \Glpi\DBAL\QueryExpression("`glpi_plugins`.`directory` <> 'terabras'");
+    }
+    return $params;
 }
 
 /**

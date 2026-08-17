@@ -1,321 +1,577 @@
 /*
- * Terabras — brand theme, faithful to the official identity manual
- * (Renato AB Studio, 2025), rendered in a PREMIUM "Stripe / Vercel" register:
- * real depth, layered elevation, subtle navy→transparent gradients and
- * confident orange highlights — richer than the earlier minimalist pass, while
- * still angular and on-brand.
+ * Terabras — design-system core (token layer + app chrome).
  *
- * Loaded AFTER fonts.css + branding.css, so it owns the chrome look. CSS-only,
- * zero core edits: overrides Tabler (--tblr-*) and GLPI (--glpi-*) custom
- * properties plus a handful of component rules.
+ * This is the single source of visual truth: it maps the Terabras design tokens
+ * (approved DS v0.1 — "rigor da Vercel × calor da Stripe, nas cores Terabras")
+ * onto GLPI's own CSS custom properties (--tblr-* / --glpi-*), so setting a value
+ * here repaints the whole product. Component-level detail lives in components.css,
+ * dashboard tiles in dashboard.css. Loaded after fonts.css + branding.css.
  *
- * Brand DNA (from the manual, not invented):
- *   · Typeface  : Kanit (Light→Bold).
- *   · Colors    : navy #140078 (Pantone 2738 C) dominant, orange #FF7800
- *                 (Pantone 151 C) as the accent; near-black navy #0F0F38 for
- *                 deep surfaces; greys #E6E6EA / #C4C4C4; white.
- *   · Geometry  : ANGULAR — right angles, small radii, orange accent-marks.
- *   · Register  : premium SaaS — layered shadows, subtle gradients, generous
- *                 but disciplined use of the brand colours for emphasis.
+ * CSS-only, zero core edits. Light on :root; real dark chrome under
+ * :root[data-glpi-theme-dark="1"].
  *
- * Strategy: light default on :root; a real dark chrome under
- * [data-glpi-theme-dark="1"]. Brand color tokens live in branding.css.
+ * Brand DNA: Kanit voice · navy #140078 structure · orange #FF7800 single accent
+ * · angular geometry (radii 4/6/9) · hairlines over heavy shadows.
  */
 
 /* =================================================================== */
-/* 0. Brand color helpers (kept alongside branding.css primaries)      */
+/* 0. Design tokens                                                    */
 /* =================================================================== */
 :root {
-    --terabras-navy: #140078;
-    --terabras-navy-lift: #2417a0;   /* lighter navy for gradient tops */
-    --terabras-navy-deep: #0f0f38;
-    --terabras-navy-soft: #2f1d93;
-    --terabras-orange: #ff7800;
-    --terabras-orange-deep: #e66d00;
-    --terabras-grey-100: #e6e6ea;
-    --terabras-grey-300: #c4c4c4;
+    --tb-navy: #140078;
+    --tb-navy-lift: #2417a0;
+    --tb-navy-deep: #0f0f38;
+    --tb-navy-soft: #2f1d93;
+    --tb-orange: #ff7800;
+    --tb-orange-lift: #ff8b24;
+    --tb-orange-deep: #e56b00;
+    --tb-orange-tint: #fff2e6;
+
+    /* cool, navy-biased neutrals */
+    --tb-bg: #f6f7fb;
+    --tb-surface: #ffffff;
+    --tb-surface-2: #fbfbfe;
+    --tb-sunk: #f1f2f8;
+    --tb-ink: #111031;
+    --tb-strong: #20204a;
+    --tb-muted: #63678a;
+    --tb-faint: #9a9fbb;
+    --tb-line: #e7e7ee;
+    --tb-line-2: #dcdce8;
+    --tb-line-strong: #c9cadb;
+
+    /* semantic (independent of the orange accent) */
+    --tb-ok: #0e7c5a;   --tb-ok-bg: #e5f3ee;
+    --tb-warn: #b4690e; --tb-warn-bg: #fbeeda;
+    --tb-crit: #c33a2e; --tb-crit-bg: #fbe9e7;
+    --tb-info: #2540c0; --tb-info-bg: #e9edfb;
+
+    /* elevation ramp */
+    --tb-e1: 0 1px 2px rgba(15, 15, 56, .05);
+    --tb-e2: 0 1px 2px rgba(15, 15, 56, .05), 0 8px 20px -12px rgba(15, 15, 56, .16);
+    --tb-e3: 0 2px 4px rgba(15, 15, 56, .06), 0 20px 40px -16px rgba(15, 15, 56, .26);
+    --tb-ring: 0 0 0 3px rgba(255, 120, 0, .3);
 }
 
 /* =================================================================== */
-/* 1. Typography — Kanit is the brand voice                            */
+/* 1. Map tokens onto GLPI / Tabler master variables                   */
 /* =================================================================== */
 :root {
-    --tblr-font-sans-serif: "Kanit", "Inter", -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    --tblr-body-font-family: var(--tblr-font-sans-serif);
+    /* primary = navy, link = navy (orange stays the single accent) */
+    --tblr-primary-rgb: 20, 0, 120;
+    --tblr-primary: rgb(20, 0, 120);
+    --tblr-primary-fg: #ffffff;
+    --tblr-link-color-rgb: 20, 0, 120;
+    --tblr-secondary: var(--tb-muted);
+    --tblr-secondary-rgb: 99, 103, 138;
+
+    /* typography — Kanit display voice, Inter body */
+    --tblr-font-sans-serif: "Kanit", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --tblr-body-font-family: "Inter", "Kanit", -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --tblr-body-color: var(--tb-ink);
+
+    /* surfaces */
+    --tblr-body-bg: var(--tb-bg);
+    --tblr-bg-surface: var(--tb-surface);
+    --tblr-bg-surface-secondary: var(--tb-surface-2);
+    --tblr-bg-surface-tertiary: var(--tb-sunk);
+    --tblr-bg-forms: var(--tb-surface);
+    --tblr-border-color: var(--tb-line);
+    --tblr-border-color-translucent: rgba(15, 15, 56, .08);
+
+    /* angular geometry — tight radii */
+    --tblr-border-radius: 6px;
+    --tblr-border-radius-sm: 4px;
+    --tblr-border-radius-lg: 9px;
+    --tblr-border-radius-xl: 10px;
+    --tblr-border-radius-2xl: 12px;
+
+    /* elevation */
+    --tblr-box-shadow-sm: var(--tb-e1);
+    --tblr-box-shadow: var(--tb-e2);
+    --tblr-box-shadow-card: var(--tb-e2);
+    --tblr-box-shadow-lg: var(--tb-e3);
+
+    /* left menu chrome */
+    --glpi-mainmenu-bg: var(--tb-navy);
+    --glpi-mainmenu-fg: #f4f6fb;
+    --glpi-mainmenu-fg-muted: rgba(244, 246, 251, .62);
+
+    /* item-form tabs: navy active text, orange underline */
+    --glpi-tabs-active-fg: var(--tb-navy);
+    --glpi-tabs-active-border-color: var(--tb-orange);
+
+    /* form section headers (the "Novo item …" ribboned band) */
+    --glpi-form-header-fg: var(--tb-navy);
+    --glpi-form-header-bg: var(--tb-surface-2);
+    --glpi-form-header-border-color: var(--tb-line);
 }
+
 body,
 .page {
-    font-family: var(--tblr-font-sans-serif);
+    font-family: var(--tblr-body-font-family);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
 }
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6,
-.card-title, .navbar-brand {
+.card-title, .navbar-brand, .page-title {
     font-family: var(--tblr-font-sans-serif);
     font-weight: 600;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
 }
-
-/* =================================================================== */
-/* 2. Global tokens — angular geometry + premium layered elevation     */
-/* =================================================================== */
-:root {
-    /* roundness — SHARP. The brand is built on right angles. */
-    --tblr-border-radius: 4px;
-    --tblr-border-radius-sm: 3px;
-    --tblr-border-radius-lg: 6px;
-    --tblr-border-radius-xl: 8px;
-    --tblr-border-radius-2xl: 10px;
-
-    /* surfaces: white content on a faint cool-grey canvas (brand greys) */
-    --tblr-body-bg: #f3f3f8;
-    --tblr-bg-surface: #ffffff;
-    --tblr-bg-surface-secondary: #f3f3f8;
-    --tblr-bg-surface-tertiary: #eaeaf1;
-    --tblr-bg-forms: #ffffff;
-    --tblr-border-color: #e4e4ec;
-    --tblr-border-color-translucent: rgba(15, 15, 56, .1);
-
-    /* elevation — Stripe-style layered shadows (hairline ring + soft depth) */
-    --tblr-box-shadow-sm: 0 1px 2px rgba(15, 15, 56, .06);
-    --tblr-box-shadow: 0 1px 2px rgba(15, 15, 56, .05), 0 4px 12px -2px rgba(15, 15, 56, .08);
-    --tblr-box-shadow-card: 0 0 0 1px rgba(15, 15, 56, .03), 0 2px 4px rgba(15, 15, 56, .04), 0 10px 26px -8px rgba(15, 15, 56, .12);
-    --tblr-box-shadow-lg: 0 4px 8px rgba(15, 15, 56, .06), 0 18px 40px -12px rgba(15, 15, 56, .18);
-
-    --tblr-body-color: #1c1c2b;
-}
-
 body {
-    font-feature-settings: "ss01";
-    /* barely-there canvas gradient so the white cards read as elevated */
-    background: linear-gradient(180deg, #f5f5f9 0%, #eeeef4 100%) fixed;
+    background: var(--tb-bg);
 }
 
 /* =================================================================== */
-/* 2b. Dark scope — deep brand navy chrome                             */
+/* 2. Dark scope — deep near-black navy chrome                         */
 /* =================================================================== */
 :root[data-glpi-theme-dark="1"] {
-    --tblr-body-bg: #08081f;
-    --tblr-bg-surface: #12123a;
-    --tblr-bg-surface-secondary: #171745;
-    --tblr-bg-surface-tertiary: #1e1e52;
-    --tblr-bg-forms: #12123a;
-    --tblr-border-color: #2a2a63;
+    /* premium dark-navy: page is a clearly-blue deep indigo (not black), cards float above it */
+    --tb-bg: #0d1038;
+    --tb-surface: #191d48;
+    --tb-surface-2: #232a5c;
+    --tb-sunk: #0a0b2a;
+    --tb-ink: #ecedf6;
+    --tb-strong: #f6f7ff;
+    --tb-muted: #9aa0c2;
+    --tb-faint: #6b7099;
+    --tb-line: rgba(255, 255, 255, .1);
+    --tb-line-2: rgba(255, 255, 255, .15);
+    --tb-line-strong: rgba(255, 255, 255, .22);
+    --tb-ok-bg: rgba(14, 124, 90, .18);
+    --tb-warn-bg: rgba(180, 105, 14, .18);
+    --tb-crit-bg: rgba(195, 58, 46, .18);
+    --tb-info-bg: rgba(37, 64, 192, .2);
+    --tb-e1: 0 1px 2px rgba(0, 0, 0, .5);
+    --tb-e2: 0 1px 2px rgba(0, 0, 0, .5), 0 10px 24px -14px rgba(0, 0, 0, .8);
+    --tb-e3: 0 2px 4px rgba(0, 0, 0, .55), 0 24px 48px -18px rgba(0, 0, 0, .9);
+
+    --tblr-secondary: #9aa0c2;
     --tblr-border-color-translucent: rgba(255, 255, 255, .1);
-    --tblr-box-shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
-    --tblr-box-shadow: 0 2px 6px rgba(0, 0, 0, .45);
-    --tblr-box-shadow-card: 0 0 0 1px rgba(255, 255, 255, .04), 0 2px 4px rgba(0, 0, 0, .4), 0 10px 26px -8px rgba(0, 0, 0, .55);
-    --tblr-box-shadow-lg: 0 18px 40px -12px rgba(0, 0, 0, .6);
-    --tblr-body-color: #e9e9f2;
-}
-:root[data-glpi-theme-dark="1"] body {
-    background: linear-gradient(180deg, #0a0a26 0%, #06061a 100%) fixed;
+    /* primary/link lighten for legibility on dark ground */
+    --tblr-primary-rgb: 122, 108, 255;
+    --tblr-primary: rgb(122, 108, 255);
+    --tblr-link-color-rgb: 150, 140, 255;
+    --glpi-mainmenu-bg: #0c0c1e;
+    --glpi-tabs-active-fg: #8a7bff;
 }
 
 /* =================================================================== */
-/* 3. Sidebar — navy chrome with a subtle top-lit gradient             */
+/* 3. Sidebar — navy chrome, refined nav + search field + orange accent */
 /* =================================================================== */
 .sidebar,
 .navbar-vertical {
-    background: linear-gradient(180deg, #1a0d90 0%, var(--terabras-navy) 42%, #0d0a44 100%) !important;
-    box-shadow: 1px 0 0 rgba(255, 255, 255, .04), 4px 0 24px -8px rgba(15, 15, 56, .5) !important;
+    /* even navy with only a faint top-lit sheen — no stark dark void below */
+    background:
+        radial-gradient(120% 40% at 50% 0%, rgba(255, 255, 255, .06), transparent 60%),
+        linear-gradient(180deg, var(--tb-navy-lift) 0%, var(--tb-navy) 34%, #100463 100%) !important;
+    box-shadow: 1px 0 0 rgba(255, 255, 255, .05), 6px 0 30px -12px rgba(15, 15, 56, .5) !important;
     border-right: none !important;
 }
 :root[data-glpi-theme-dark="1"] .sidebar,
 :root[data-glpi-theme-dark="1"] .navbar-vertical {
-    background: linear-gradient(180deg, #16123f 0%, #0e0b33 55%, #08081f 100%) !important;
-}
-.sidebar .nav-item {
-    margin: 1px 8px;
-}
-.sidebar .nav-link {
-    border-radius: 4px;
-    font-weight: 500;
-    position: relative;
-    transition: background-color .12s ease, color .12s ease, box-shadow .12s ease;
-}
-.sidebar .nav-link:hover {
-    background: rgba(255, 255, 255, .09);
-    color: #ffffff;
-}
-/* active item: lighter-navy fill + a solid orange left bar (brand accent-mark) */
-.sidebar .nav-item.active > .nav-link,
-.sidebar .nav-link.active,
-.sidebar .nav-link.show {
-    background: rgba(255, 255, 255, .13);
-    color: #ffffff;
-    box-shadow: inset 3px 0 0 var(--terabras-orange), 0 1px 3px rgba(0, 0, 0, .2);
+    background:
+        radial-gradient(120% 40% at 50% 0%, rgba(255, 255, 255, .04), transparent 60%),
+        linear-gradient(180deg, #16123f 0%, #0e0b33 55%, #08081f 100%) !important;
 }
 .sidebar .navbar-brand {
-    padding-top: 12px;
-    padding-bottom: 14px;
+    padding: 16px 16px 12px;
+}
+
+/* "Encontrar um menu" — dressed as a real search field */
+.sidebar span.d-none.d-lg-inline-block {
+    display: block !important;
+    padding: 4px 12px 10px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+.sidebar span.d-none.d-lg-inline-block > .btn.btn-ghost-secondary {
+    display: flex;
+    width: 100%;
+    margin: 0 !important;   /* kill GLPI's inherited margin that pushed it past the edge */
+    justify-content: flex-start;
+    gap: 8px;
+    background: rgba(255, 255, 255, .07);
+    border: 1px solid rgba(255, 255, 255, .12);
+    color: rgba(255, 255, 255, .66);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-weight: 500;
+    transition: background .14s ease, border-color .14s ease, color .14s ease;
+}
+.sidebar span.d-none.d-lg-inline-block > .btn.btn-ghost-secondary:hover {
+    background: rgba(255, 255, 255, .12);
+    border-color: rgba(255, 255, 255, .22);
+    color: #fff;
+}
+.sidebar span.d-none.d-lg-inline-block > .btn .ti {
+    font-size: 1.05rem;
+    opacity: .8;
+}
+
+/* Menu items — roomier, aligned icons, refined chevron */
+.sidebar .navbar-nav { gap: 2px; padding: 0 8px; }
+.sidebar .nav-item { margin: 0; }
+.sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, .82);
+    position: relative;
+    transition: background-color .13s ease, color .13s ease, box-shadow .13s ease;
+}
+.sidebar .nav-link i.ti,
+.sidebar .nav-link .ti {
+    font-size: 1.2rem;
+    opacity: .82;
+    width: 22px;
+    text-align: center;
+    flex: none;
+}
+/* Collapsed rail: label is hidden, so center the lone icon in the narrow column */
+body.navbar-collapsed #navbar-menu .nav-link,
+body.navbar-collapsed .sidebar .nav-link {
+    justify-content: center !important;
+    gap: 0 !important;
+    padding-inline: 0 !important;
+}
+body.navbar-collapsed .sidebar .nav-link i.ti,
+body.navbar-collapsed .sidebar .nav-link .ti { margin: 0 !important; }
+/* GLPI colours hovered/open menu items with --tblr-primary (= our navy = the menu
+   bg → invisible text), via an #id selector that outranks plain classes. Force
+   legible white text + our lighter overlay with !important. */
+.sidebar .nav-link:hover,
+.sidebar .nav-item:hover > .nav-link,
+#navbar-menu .nav-item:hover > .nav-link {
+    background: rgba(255, 255, 255, .1) !important;
+    color: #ffffff !important;
+    border-left-color: transparent !important;
+}
+.sidebar .nav-link:hover i.ti { opacity: 1; }
+/* refined chevron — a clean down-caret drawn from borders (scoped to section
+   items so the user/entity menu caret is untouched). Points up when open. */
+.sidebar .navbar-nav > .nav-item > .nav-link.dropdown-toggle::after {
+    content: "";
+    display: inline-block;
+    margin-left: auto;
+    width: 7px;
+    height: 7px;
+    border: 0 solid currentColor;
+    border-right-width: 1.6px;
+    border-bottom-width: 1.6px;
+    transform: translateY(-1px) rotate(45deg);
+    opacity: .5;
+    transition: transform .15s ease, opacity .15s ease;
+}
+.sidebar .navbar-nav > .nav-item > .nav-link.dropdown-toggle:hover::after { opacity: .85; }
+.sidebar .navbar-nav > .nav-item > .nav-link.show::after {
+    transform: translateY(2px) rotate(-135deg);
+    opacity: .9;
+}
+/* open/active section: lighter fill + orange accent-bar (brand mark) */
+.sidebar .nav-item.active > .nav-link,
+.sidebar .nav-link.active,
+.sidebar .nav-link.show,
+#navbar-menu .nav-item > .nav-link.show,
+#navbar-menu .nav-item > .nav-link.active {
+    background: rgba(255, 255, 255, .14) !important;
+    color: #ffffff !important;
+    border-left-color: var(--tb-orange) !important;
+    box-shadow: inset 3px 0 0 var(--tb-orange), 0 1px 3px rgba(0, 0, 0, .18);
+}
+.sidebar .nav-item.active > .nav-link i.ti,
+.sidebar .nav-link.active i.ti { color: #fff; opacity: 1; }
+
+/* Submenu (dropdown) items live on the dark sidebar, but GLPI hovers them with
+   --tblr-primary (navy → invisible) and our light general-dropdown styling would
+   also clash. Force legible light text + subtle overlay, scoped to the sidebar. */
+/* Solid, opaque submenu: inline when expanded, a floating flyout when collapsed —
+   a translucent bg would let the content bleed through the collapsed flyout. */
+.sidebar .dropdown-menu,
+#navbar-menu .dropdown-menu {
+    background-color: var(--tb-navy-deep) !important;
+    border: 1px solid rgba(255, 255, 255, .08) !important;
+    box-shadow: 0 18px 40px -14px rgba(0, 0, 0, .6) !important;
+    border-radius: 8px !important;
+    padding: 5px !important;
+}
+.sidebar .dropdown-menu .dropdown-item,
+#navbar-menu .dropdown-menu .dropdown-item {
+    color: rgba(255, 255, 255, .8) !important;
+    border-radius: 6px;
+    border-left-color: transparent !important;
+}
+.sidebar .dropdown-menu .dropdown-item i,
+.sidebar .dropdown-menu .dropdown-item .ti {
+    color: rgba(255, 255, 255, .7) !important;
+}
+.sidebar .dropdown-menu .dropdown-item:hover,
+.sidebar .dropdown-menu .dropdown-item.active,
+#navbar-menu .dropdown-menu .dropdown-item:hover,
+#navbar-menu .dropdown-menu .dropdown-item.active {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, .12) !important;
+    border-left-color: var(--tb-orange) !important;
+}
+.sidebar .dropdown-menu .dropdown-item:hover i,
+.sidebar .dropdown-menu .dropdown-item:hover .ti { color: #ffffff !important; }
+
+/* Bottom "Recolher menu" — divider above, muted control */
+.sidebar p.text-start {
+    margin: 8px 12px 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, .08);
+}
+.sidebar p.text-start > .btn.btn-ghost-secondary {
+    color: rgba(255, 255, 255, .55);
+    font-weight: 500;
+}
+.sidebar p.text-start > .btn.btn-ghost-secondary:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, .08);
 }
 
 /* =================================================================== */
-/* 4. Top bar — white with crisp depth against the navy sidebar        */
+/* 4. Top bar — modern header: pill search, refined user chip           */
 /* =================================================================== */
-.page > header.navbar,
-.navbar-search {
-    background: var(--tblr-bg-surface);
-    box-shadow: 0 1px 0 var(--tblr-border-color), 0 4px 16px -6px rgba(15, 15, 56, .12) !important;
+.page > header.navbar {
+    background: var(--tb-surface);
+    box-shadow: 0 1px 0 var(--tb-line), 0 4px 16px -8px rgba(15, 15, 56, .08) !important;
     border-bottom: none;
+    padding-inline: 10px;
 }
 .secondary-bar {
-    box-shadow: 0 1px 0 var(--tblr-border-color) !important;
+    box-shadow: 0 1px 0 var(--tb-line) !important;
     border-bottom: none;
-    background: var(--tblr-bg-surface);
+    background: var(--tb-surface);
+}
+
+/* Breadcrumb / Home — quiet nav with a hover chip, bold current page */
+.navbar .breadcrumb-alternate { margin: 0; }
+.navbar .breadcrumb-item > a {
+    color: var(--tb-muted);
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 7px;
+    text-decoration: none;
+    transition: background .14s ease, color .14s ease;
+}
+.navbar .breadcrumb-item > a:hover { background: var(--tb-sunk); color: var(--tb-ink); }
+.navbar .breadcrumb-item.here,
+.navbar .breadcrumb-item.here > a { color: var(--tb-strong); font-weight: 600; }
+.navbar .breadcrumb-item .ti-home-2 { color: var(--tb-navy); }
+
+/* Search — a modern pill with the icon on the left, orange focus ring */
+.navbar .input-group.input-group-flat {
+    background: var(--tb-sunk);
+    border: 1px solid var(--tb-line);
+    border-radius: 9px;
+    overflow: hidden;
+    min-width: 300px;
+    transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.navbar .input-group.input-group-flat:focus-within {
+    background: var(--tb-surface);
+    border-color: var(--tb-orange);
+    box-shadow: var(--tb-ring);
+}
+.navbar .input-group-flat > .form-control {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    font-size: 14px;
+    padding: 8px 12px 8px 6px;
+    color: var(--tb-ink);
+}
+.navbar .input-group-flat > .form-control::placeholder { color: var(--tb-faint); }
+.navbar .input-group-flat > .input-group-text {
+    order: -1;                     /* move the search icon to the left */
+    background: transparent;
+    border: none;
+    color: var(--tb-muted);
+    padding: 8px 4px 8px 12px;
+}
+.navbar .input-group-flat:focus-within > .input-group-text { color: var(--tb-orange); }
+
+/* User chip — avatar + name/entity, hover surface */
+.navbar .navbar-nav .nav-item.dropdown > .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 8px 5px 12px;
+    border-radius: 10px;
+    transition: background .14s ease;
+}
+.navbar .navbar-nav .nav-item.dropdown > .nav-link:hover { background: var(--tb-sunk); }
+.navbar .nav-link .pe-2 > div:first-child {
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    color: var(--tb-strong);
+    font-size: 13.5px;
+    line-height: 1.2;
+}
+.navbar .nav-link .text-muted-menu,
+.navbar .nav-link [data-testid="current-entity"] {
+    color: var(--tb-muted) !important;
+    font-size: 11.5px;
+}
+/* avatar: brand navy for initials (background-color won't clobber a real photo) */
+.navbar .nav-link .avatar {
+    background-color: var(--tb-navy) !important;
+    color: #fff !important;
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    border-radius: 9px;
+    box-shadow: 0 1px 3px rgba(15, 15, 56, .25);
+}
+.navbar .nav-link.dropdown-toggle::after { color: var(--tb-faint); }
+
+/* icon buttons on the bars (notifications, saved searches, etc.) */
+.navbar .btn-icon,
+.secondary-bar .btn-icon {
+    border-radius: 8px;
+    color: var(--tb-muted);
+}
+.navbar .btn-icon:hover,
+.secondary-bar .btn-icon:hover { background: var(--tb-sunk); color: var(--tb-navy); }
+
+/* the injected dark-mode toggle */
+.navbar .tb-darktoggle {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    border-radius: 9px;
+    border: 1px solid var(--tb-line-2);
+    background: var(--tb-surface);
+    color: var(--tb-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    margin-inline: 2px 8px;
+    cursor: pointer;
+    transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+.navbar .tb-darktoggle:hover {
+    background: var(--tb-sunk);
+    color: var(--tb-navy);
+    border-color: var(--tb-line-strong);
+}
+:root[data-glpi-theme-dark="1"] .navbar .tb-darktoggle {
+    color: #ffd08a;
+}
+:root[data-glpi-theme-dark="1"] .navbar .tb-darktoggle:hover {
+    color: var(--tb-orange);
 }
 
 /* =================================================================== */
-/* 5. Cards — elevated panels with a hairline ring and soft depth      */
+/* 5. Cards — elevated panels, hairline ring, soft depth               */
 /* =================================================================== */
 .card {
-    --tblr-card-border-radius: 6px;
-    --tblr-card-cap-bg: var(--tblr-bg-surface) !important;
-    border-color: transparent;
-    box-shadow: var(--tblr-box-shadow-card);
-    transition: box-shadow .16s ease, transform .16s ease;
+    --tblr-card-border-radius: 9px;
+    border-color: var(--tb-line);
+    box-shadow: var(--tb-e1);
 }
-.card > .card-header,
-.card > .card-status-top + .card-header {
-    border-bottom: 1px solid var(--tblr-border-color);
+.card > .card-header {
+    border-bottom: 1px solid var(--tb-line);
     font-weight: 600;
 }
-.card-title {
+.card-title { font-weight: 600; }
+
+/* =================================================================== */
+/* 6. Buttons — angular, premium depth; navy primary / orange CTA       */
+/* =================================================================== */
+.btn {
     font-weight: 600;
+    border-radius: 6px;
+    letter-spacing: -.005em;
+    transition: background .14s ease, box-shadow .14s ease, transform .06s ease, border-color .14s ease;
+}
+.btn:active { transform: translateY(1px); }
+.btn-primary {
+    background: linear-gradient(180deg, var(--tb-navy-lift) 0%, var(--tb-navy) 100%);
+    border-color: var(--tb-navy);
+    color: #fff;
+    box-shadow: var(--tb-e1), inset 0 1px 0 rgba(255, 255, 255, .12);
+}
+.btn-primary:hover {
+    background: linear-gradient(180deg, #2c1eb8 0%, #1a0d90 100%);
+    border-color: #1a0d90;
+    box-shadow: var(--tb-e2), inset 0 1px 0 rgba(255, 255, 255, .14);
+}
+/* Orange = the brand CTA — map Tabler's warning/orange utilities */
+.btn-warning,
+.btn-orange {
+    --tblr-btn-color: #fff;
+    --tblr-btn-color-hover: #fff;
+    background: linear-gradient(180deg, var(--tb-orange-lift) 0%, var(--tb-orange) 100%);
+    border-color: var(--tb-orange);
+    color: #fff;
+    box-shadow: var(--tb-e1), inset 0 1px 0 rgba(255, 255, 255, .2);
+}
+.btn-warning:hover,
+.btn-orange:hover {
+    background: linear-gradient(180deg, var(--tb-orange) 0%, var(--tb-orange-deep) 100%);
+    border-color: var(--tb-orange-deep);
+    color: #fff;
+    box-shadow: 0 6px 18px -6px rgba(255, 120, 0, .5);
 }
 
 /* =================================================================== */
-/* 6. Tables — uppercase geometric headers                             */
+/* 7. Form controls — orange focus ring, navy check                    */
+/* =================================================================== */
+.form-control,
+.form-select {
+    border-color: var(--tb-line-strong);
+}
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus,
+.ts-control:focus,
+.select2-container--focus .select2-selection {
+    border-color: var(--tb-orange) !important;
+    box-shadow: var(--tb-ring) !important;
+}
+.form-check-input:checked {
+    background-color: var(--tb-navy);
+    border-color: var(--tb-navy);
+}
+.form-label,
+.col-form-label {
+    font-weight: 600;
+    color: var(--tb-strong);
+}
+.required { color: var(--tb-orange); }
+
+/* =================================================================== */
+/* 8. Tables — uppercase geometric headers, gentle hover               */
 /* =================================================================== */
 .table {
-    --tblr-table-border-color: var(--tblr-border-color);
+    --tblr-table-border-color: var(--tb-line);
 }
 .table > thead th {
     text-transform: uppercase;
     font-size: 11px;
     letter-spacing: .05em;
     font-weight: 600;
-    color: var(--tblr-secondary);
+    color: var(--tb-muted);
 }
 
 /* =================================================================== */
-/* 7. Buttons — angular, with premium depth; navy primary / orange CTA */
-/* =================================================================== */
-.btn {
-    font-weight: 500;
-    border-radius: 4px;
-    letter-spacing: .005em;
-    transition: background .14s ease, box-shadow .14s ease, transform .06s ease;
-}
-.btn:active {
-    transform: translateY(.5px);
-}
-.btn-primary {
-    background: linear-gradient(180deg, var(--terabras-navy-lift) 0%, var(--terabras-navy) 100%);
-    border-color: var(--terabras-navy);
-    box-shadow: 0 1px 2px rgba(15, 15, 56, .3), inset 0 1px 0 rgba(255, 255, 255, .12);
-}
-.btn-primary:hover {
-    background: linear-gradient(180deg, #2c1eb8 0%, #1a0d90 100%);
-    border-color: #1a0d90;
-    box-shadow: 0 2px 8px rgba(20, 0, 120, .35), inset 0 1px 0 rgba(255, 255, 255, .14);
-}
-/* Orange is the brand call-to-action colour — map Tabler's orange utilities. */
-.btn-warning,
-.btn-orange {
-    --tblr-btn-color: #ffffff;
-    --tblr-btn-color-hover: #ffffff;
-    background: linear-gradient(180deg, #ff8a1f 0%, var(--terabras-orange) 100%);
-    border-color: var(--terabras-orange);
-    box-shadow: 0 1px 2px rgba(230, 109, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .2);
-}
-.btn-warning:hover,
-.btn-orange:hover {
-    background: linear-gradient(180deg, var(--terabras-orange) 0%, var(--terabras-orange-deep) 100%);
-    border-color: var(--terabras-orange-deep);
-    color: #ffffff;
-}
-.form-control:focus,
-.form-select:focus,
-.form-check-input:focus {
-    border-color: var(--terabras-orange);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--terabras-orange) 22%, transparent);
-}
-.form-check-input:checked {
-    background-color: var(--terabras-navy);
-    border-color: var(--terabras-navy);
-}
-
-/* =================================================================== */
-/* 8. Badges / pills — squared, not rounded (angular brand)            */
+/* 9. Badges — squared (angular brand)                                 */
 /* =================================================================== */
 .badge {
-    border-radius: 3px;
-    font-weight: 500;
+    border-radius: 4px;
+    font-weight: 600;
     letter-spacing: .01em;
 }
 
-/* Links: navy by default, orange on hover (brand emphasis colour) */
+/* Links: orange on hover (brand emphasis) */
 a:not(.btn):not(.nav-link):not(.page-link):not(.dropdown-item):hover {
-    color: var(--terabras-orange);
-}
-
-/* =================================================================== */
-/* 9. Dashboard big-number tiles — premium KPI cards                   */
-/*    GLPI colors each tile via a per-id rule (#bn_xxx{background}).    */
-/*    We give them real depth: a faint navy-tinted gradient, a layered  */
-/*    shadow, a thin orange top accent (the brand's highlight stripe),  */
-/*    a navy value, and an orange watermark icon that lifts on hover.   */
-/* =================================================================== */
-.dashboard .card.big-number {
-    background: linear-gradient(158deg, #ffffff 0%, #f4f4fa 100%) !important;
-    color: var(--tblr-body-color) !important;
-    border: none !important;
-    border-top: 2px solid var(--terabras-orange) !important;
-    border-radius: 6px !important;
-    box-shadow: var(--tblr-box-shadow-card) !important;
-    transition: box-shadow .16s ease, transform .16s ease;
-}
-.dashboard .card.big-number:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(15, 15, 56, .12), 0 14px 34px -10px rgba(20, 0, 120, .22) !important;
-}
-.dashboard .card.big-number .number,
-.dashboard .card.big-number .suffix {
-    color: var(--terabras-navy) !important;
-    font-weight: 600;
-}
-.dashboard .card.big-number .label {
-    color: var(--tblr-secondary) !important;
-    font-weight: 500;
-}
-.dashboard .card.big-number .main-icon {
-    color: var(--terabras-orange) !important;
-    opacity: .9 !important;
-    background: linear-gradient(180deg, #ff8a1f, var(--terabras-orange));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 2px 4px rgba(255, 120, 0, .25));
-}
-/* Dark scope: navy-glass tiles, white value, orange accent kept */
-:root[data-glpi-theme-dark="1"] .dashboard .card.big-number {
-    background: linear-gradient(158deg, #17174a 0%, #101036 100%) !important;
-}
-:root[data-glpi-theme-dark="1"] .dashboard .card.big-number .number,
-:root[data-glpi-theme-dark="1"] .dashboard .card.big-number .suffix {
-    color: #ffffff !important;
-}
-
-/* Chart widgets: neutralize GLPI's fixed light bg so they belong in both
-   themes, and give them the same elevated-panel treatment. */
-.dashboard .card.g-chart {
-    background: var(--tblr-bg-surface) !important;
-    color: var(--tblr-body-color) !important;
-    border: none !important;
-    border-radius: 6px !important;
-    box-shadow: var(--tblr-box-shadow-card) !important;
+    color: var(--tb-orange);
 }

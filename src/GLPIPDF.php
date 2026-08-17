@@ -61,6 +61,8 @@ class GLPIPDF extends TCPDF
 
     public function __construct(array $config = [], ?int $count = null, ?string $title = null, bool $addpage = true)
     {
+        global $CFG_GLPI;
+
         if (
             isset($config['font'])
             && !in_array($config['font'], array_keys(self::getFontList()), true)
@@ -88,8 +90,8 @@ class GLPIPDF extends TCPDF
             $this->SetHeaderData('', 0, $title, '');
         }
 
-        $this->SetCreator('GLPI');
-        $this->SetAuthor('GLPI');
+        $this->SetCreator($CFG_GLPI['app_name'] ?? 'GLPI');
+        $this->SetAuthor($CFG_GLPI['app_name'] ?? 'GLPI');
 
         $this->SetFont($config['font'], '', $config['font_size']);
         $this->setHeaderFont([$config['font'], 'B', $config['font_size']]);

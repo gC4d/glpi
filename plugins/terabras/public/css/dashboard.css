@@ -1,0 +1,532 @@
+/*
+ * Terabras — Central dashboard redesign.
+ *
+ * Loaded LAST in the Terabras stylesheet chain (after fonts/branding/theme), so
+ * it owns the dashboard look without heavy !important. Reuses the brand tokens
+ * (--terabras-*) declared in theme.css.
+ *
+ * Scope: the central/technician dashboard only — the branded hero (.tb-hero,
+ * injected by templates.terabras/pages/central/index.html.twig) plus the widget
+ * grid GLPI generates (.dashboard .card.big-number / .g-chart). Pure paint:
+ * colors, elevation, geometry, typography — never grid positioning.
+ */
+
+/* =================================================================== */
+/* 1. Branded hero — greeting band above the widgets                   */
+/* =================================================================== */
+.tb-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin: 0 0 1.25rem;
+    padding: 1.35rem 1.6rem;
+    border-radius: 8px;
+    color: #fff;
+    background:
+        radial-gradient(120% 140% at 100% 0%, rgba(255, 120, 0, .28) 0%, rgba(255, 120, 0, 0) 45%),
+        linear-gradient(135deg, var(--terabras-navy-lift, #2417a0) 0%, var(--terabras-navy, #140078) 55%, var(--terabras-navy-deep, #0f0f38) 100%);
+    box-shadow:
+        0 1px 0 rgba(255, 255, 255, .06) inset,
+        0 14px 34px -14px rgba(15, 15, 56, .55);
+    position: relative;
+    overflow: hidden;
+}
+
+/* angular orange accent mark on the leading edge (brand geometry) */
+.tb-hero::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    width: 5px;
+    background: var(--terabras-orange, #ff7800);
+}
+
+.tb-hero-greeting {
+    font-family: var(--tblr-font-sans-serif);
+    font-size: 1.7rem;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+}
+
+.tb-hero-name {
+    color: var(--terabras-orange, #ff7800);
+}
+
+.tb-hero-sub {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+    font-weight: 300;
+    text-transform: capitalize;
+    color: rgba(255, 255, 255, .72);
+}
+
+/* decorative brand chevron block on the trailing edge */
+.tb-hero-brand {
+    flex: none;
+    display: flex;
+    align-items: center;
+}
+
+.tb-hero-mark {
+    width: 46px;
+    height: 46px;
+    display: block;
+    background: var(--terabras-orange, #ff7800);
+    /* angular L-bracket cut — echoes the identity motif */
+    clip-path: polygon(0 0, 100% 0, 100% 32%, 40% 32%, 40% 100%, 0 100%);
+    opacity: .92;
+}
+
+@media screen and (max-width: 700px) {
+    .tb-hero { padding: 1.1rem 1.15rem; }
+    .tb-hero-greeting { font-size: 1.35rem; }
+    .tb-hero-brand { display: none; }
+}
+
+/* =================================================================== */
+/* 2. Dashboard canvas — breathing room + softer async load            */
+/* =================================================================== */
+.dashboard .card {
+    --tblr-card-border-radius: 8px;
+    border-radius: 8px;
+}
+/* The grid is fetched over AJAX then positioned by gridstack client-side.
+   Reserve height so the panel doesn't collapse→expand, and fade widgets in
+   (opacity only — gridstack owns transform for positioning) so they don't pop. */
+.dashboard .grid-stack {
+    min-height: 300px;
+}
+/* The filter bar reserves a tall empty filter drop-zone even when no filter is
+   applied, leaving a big blank band between the toolbar and the widgets. Collapse
+   the empty zone + trim the margins so the cards sit right under the toolbar
+   (the "Adicionar filtro" control stays). */
+.dashboard .filters_toolbar {
+    margin: 0 6px 4px !important;
+    min-height: 0 !important;
+    height: auto !important;
+}
+.dashboard .filters_toolbar .filters:empty {
+    min-height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+@keyframes tb-widget-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+}
+
+/* --- Async load: hide the grid until it has finished loading AND its layout
+   is stable, then reveal it once — kills both the spinner flash and the card
+   "shuffle" (gridstack/masonry repositioning after render). Classes are toggled
+   by js/ux.js; if JS never runs the grid just shows normally (no hiding). */
+.dashboard .grid-stack.tb-grid-loading,
+.masonry_grid.tb-grid-loading {
+    position: relative;
+    min-height: 240px;
+}
+.dashboard .grid-stack.tb-grid-loading > .grid-stack-item,
+.masonry_grid.tb-grid-loading > .grid-item {
+    opacity: 0 !important;
+    animation: none !important;
+}
+.dashboard .grid-stack.tb-grid-loading::after,
+.masonry_grid.tb-grid-loading::after {
+    content: "";
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    width: 34px;
+    height: 34px;
+    margin-left: -17px;
+    border: 3px solid var(--tb-line, #e7e7ee);
+    border-top-color: var(--terabras-navy, #140078);
+    border-radius: 50%;
+    animation: tb-spin .7s linear infinite;
+}
+.dashboard .grid-stack.tb-grid-ready > .grid-stack-item,
+.masonry_grid.tb-grid-ready > .grid-item {
+    animation: tb-widget-in .35s ease both;
+}
+@keyframes tb-spin { to { transform: rotate(360deg); } }
+.dashboard .spinner-border,
+.masonry_grid .spinner-border { color: var(--terabras-navy, #140078) !important; }
+
+/* --- List-widget panels (Seu Planejamento, Lembretes, …) -----------
+   These render as a table whose <th> is the grey title band. Dress the band
+   as a proper card header, and calm the empty-state rows. */
+.dashboard .card table.table > thead > tr > th {
+    background: var(--tb-surface-2, #fbfbfe);
+    color: var(--terabras-navy, #140078);
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    font-size: .8rem;
+    letter-spacing: .035em;
+    text-transform: uppercase;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--tb-line, #e7e7ee);
+}
+.dashboard .card table.table > thead > tr > th a { color: inherit; }
+.dashboard .card table.table > thead > tr > th .btn-icon {
+    color: var(--tb-muted, #63678a);
+    border-radius: 7px;
+}
+.dashboard .card table.table > thead > tr > th .btn-icon:hover {
+    background: var(--tb-sunk, #f1f2f8);
+    color: var(--terabras-orange, #ff7800);
+}
+.dashboard .card table.table > tbody > tr > td {
+    border-color: var(--tb-line, #e7e7ee);
+}
+/* the "Não há … para mostrar" empty rows */
+.dashboard .card .empty-card,
+.dashboard .card td.center,
+.dashboard .card .no-data {
+    color: var(--tb-muted, #63678a);
+    font-weight: 400;
+}
+
+/* =================================================================== */
+/* 3. KPI tiles (.big-number) — modern stat card: icon badge, no stripe */
+/* =================================================================== */
+/* GLPI paints each tile via a per-id rule (#bn_xxx{background;color}) which, as an
+   ID selector, outranks our class rule — so surface + text colors need !important. */
+.dashboard .card.big-number {
+    background: var(--tblr-bg-surface, #fff) !important;
+    color: var(--tb-ink, #111031) !important;
+    border: 1px solid var(--tb-line, #e7e7ee) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 1px 2px rgba(15, 15, 56, .04), 0 10px 24px -16px rgba(15, 15, 56, .16);
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* centered when it fits; content is short enough below */
+    gap: .35rem;
+    padding: 16px 22px;
+}
+.dashboard .card.big-number:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--tb-orange, #ff7800) 30%, var(--tb-line));
+    box-shadow: 0 4px 8px rgba(15, 15, 56, .06), 0 22px 40px -18px rgba(20, 0, 120, .28);
+}
+
+/* the number — the protagonist */
+.dashboard .card.big-number .formatted-number { line-height: 1; }
+.dashboard .card.big-number .formatted-number .number,
+.dashboard .card.big-number .formatted-number .suffix {
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 700;
+    color: var(--terabras-navy, #140078) !important;
+    letter-spacing: -0.04em;
+    font-size: 2.5rem !important;
+    line-height: 1.02;
+    font-variant-numeric: tabular-nums;
+}
+.dashboard .card.big-number .label {
+    font-weight: 500;
+    color: var(--tb-muted, #656d77) !important;
+    letter-spacing: .015em;
+    font-size: .875rem;
+    margin: 0;
+}
+
+/* the widget icon → a soft-tinted rounded badge, top-right; fills on hover */
+.dashboard .card.big-number .main-icon {
+    position: absolute;
+    top: 18px;
+    inset-inline-end: 18px;
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tb-orange-tint, #fff2e6);
+    color: var(--tb-orange, #ff7800) !important;
+    border-radius: 12px;
+    font-size: 1.3rem;
+    opacity: 1;
+    transition: background .16s ease, color .16s ease, transform .16s ease;
+}
+.dashboard .card.big-number:hover .main-icon {
+    background: linear-gradient(135deg, #ff8b24, var(--tb-orange, #ff7800));
+    color: #fff !important;
+    transform: scale(1.06);
+}
+
+/* =================================================================== */
+/* 4. Summary-numbers (multi-line KPI stack)                           */
+/* =================================================================== */
+.dashboard .card.big-number.summary-numbers .line {
+    border-radius: 4px;
+    transition: background-color .14s ease;
+}
+
+.dashboard .card.big-number.summary-numbers .line:hover {
+    background: rgba(255, 120, 0, .07);
+}
+
+.dashboard .card.big-number.summary-numbers .content {
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    color: var(--terabras-navy, #140078);
+}
+
+/* =================================================================== */
+/* 5. Chart / list cards — modern surface matching the KPI cards        */
+/* =================================================================== */
+/* GLPI ships these with a FIXED light background (historically light-only);
+   !important reclaims the surface in both themes, then we give them the same
+   rounded / elevated / hover-lift treatment as the KPI stat cards. */
+.dashboard .card.g-chart,
+.dashboard .card:not(.big-number) {
+    background: var(--tblr-bg-surface, #fff) !important;
+    border: 1px solid var(--tb-line, #e7e7ee) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 1px 2px rgba(15, 15, 56, .04), 0 10px 24px -16px rgba(15, 15, 56, .16);
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.dashboard .card.g-chart:hover,
+.dashboard .card:not(.big-number):hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--tb-orange, #ff7800) 22%, var(--tb-line)) !important;
+    box-shadow: 0 4px 8px rgba(15, 15, 56, .06), 0 20px 38px -18px rgba(20, 0, 120, .22);
+}
+
+/* the caption/title — Kanit navy, a clean footer label like the KPI label */
+.dashboard .card.g-chart .main-label,
+.dashboard .card .main-label {
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: -0.015em;
+    color: var(--terabras-navy, #140078);
+}
+
+/* the widget icon → a soft-tinted rounded badge next to the caption, fills on hover */
+.dashboard .card.g-chart .main-icon,
+.dashboard .card:not(.big-number) .main-icon {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tb-orange-tint, #fff2e6);
+    color: var(--tb-orange, #ff7800) !important;
+    border-radius: 10px;
+    font-size: 1.05rem;
+    transition: background .16s ease, color .16s ease, transform .16s ease;
+}
+.dashboard .card.g-chart:hover .main-icon,
+.dashboard .card:not(.big-number):hover .main-icon {
+    background: linear-gradient(135deg, #ff8b24, var(--tb-orange, #ff7800));
+    color: #fff !important;
+    transform: scale(1.06);
+}
+
+.dashboard .card .empty-card.no-data {
+    color: var(--tb-muted, #98a2b3);
+    font-weight: 300;
+}
+
+/* =================================================================== */
+/* 6. Dark chrome — keep the brand under GLPI's real dark mode          */
+/* =================================================================== */
+:root[data-glpi-theme-dark="1"] .dashboard .card.big-number,
+:root[data-glpi-theme-dark="1"] .dashboard .card:not(.big-number) {
+    background: var(--tb-surface, #17182f) !important;
+    border-color: var(--tb-line, rgba(255, 255, 255, .1)) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 12px 28px -18px rgba(0, 0, 0, .8);
+}
+:root[data-glpi-theme-dark="1"] .dashboard .card.big-number:hover,
+:root[data-glpi-theme-dark="1"] .dashboard .card:not(.big-number):hover {
+    border-color: color-mix(in srgb, var(--tb-orange) 40%, var(--tb-line)) !important;
+}
+
+:root[data-glpi-theme-dark="1"] .dashboard .card.big-number .formatted-number .number,
+:root[data-glpi-theme-dark="1"] .dashboard .card.big-number .formatted-number .suffix,
+:root[data-glpi-theme-dark="1"] .dashboard .card.big-number.summary-numbers .content,
+:root[data-glpi-theme-dark="1"] .dashboard .card .main-label {
+    color: #eef0ff !important;
+}
+
+:root[data-glpi-theme-dark="1"] .tb-hero {
+    box-shadow: 0 14px 34px -14px rgba(0, 0, 0, .7);
+}
+
+/* =================================================================== */
+/* 6b. Dashboard's OWN night mode (.dashboard.theme-dark) — a separate  */
+/*     toggle from the GLPI palette dark. It only darkens the canvas, so */
+/*     our !important white cards stranded on black. Re-point the tokens */
+/*     our card rules read from to dark values, scoped to this mode.     */
+/* =================================================================== */
+.dashboard.theme-dark {
+    --tblr-bg-surface: #191e33;
+    --tb-surface: #191e33;
+    --tb-surface-2: #1e2440;
+    --tb-sunk: #141830;
+    --tb-ink: #ecedf6;
+    --tb-strong: #f6f7ff;
+    --tb-muted: #9aa0c2;
+    --tb-faint: #6b7099;
+    --tb-line: rgba(255, 255, 255, .09);
+    --tb-line-2: rgba(255, 255, 255, .13);
+    --terabras-navy: #cdd0ff;   /* KPI numbers + chart titles → legible on dark */
+    --tb-orange-tint: rgba(255, 120, 0, .16);
+}
+.dashboard.theme-dark .card.big-number,
+.dashboard.theme-dark .card.g-chart,
+.dashboard.theme-dark .card:not(.big-number) {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 10px 24px -16px rgba(0, 0, 0, .8);
+}
+.dashboard.theme-dark .card.big-number:hover,
+.dashboard.theme-dark .card.g-chart:hover {
+    border-color: color-mix(in srgb, var(--tb-orange) 35%, var(--tb-line)) !important;
+}
+.dashboard.theme-dark .card .empty-card.no-data { color: var(--tb-muted); }
+
+/* =================================================================== */
+/* 7. Dashboard toolbar — rebuilt as two contained control clusters.    */
+/*    GLPI renders two loose <span.toolbar> siblings (selector left,     */
+/*    action icons right) floating on the page with a void between. We   */
+/*    wrap each into a real segmented control so it reads as a toolbar.  */
+/* =================================================================== */
+
+/* LEFT cluster: the dashboard picker + add-panel, as one pill */
+.dashboard .toolbar.left-toolbar .change-dashboard {
+    align-items: center;
+    gap: 2px;
+    background: var(--tb-surface);
+    border: 1px solid var(--tb-line);
+    border-radius: 10px;
+    padding: 3px 3px 3px 4px;
+    box-shadow: var(--tb-e1);
+}
+.dashboard .dashboard_select.form-select {
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    color: var(--tb-strong);
+    border: none !important;
+    background-color: transparent;
+    box-shadow: none !important;
+    width: auto !important;
+    min-width: 120px;
+    height: 30px;
+    padding-inline: 8px 26px;
+}
+
+/* RIGHT cluster: the action icons as a segmented control with dividers */
+.dashboard > span.toolbar:not(.left-toolbar) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    background: var(--tb-surface);
+    border: 1px solid var(--tb-line);
+    border-radius: 10px;
+    padding: 3px;
+    box-shadow: var(--tb-e1);
+}
+.dashboard > span.toolbar:not(.left-toolbar) > .btn-icon + .btn-icon {
+    margin-left: 1px;
+}
+
+/* every control button in either cluster */
+.dashboard .toolbar .btn-icon,
+.dashboard .change-dashboard .btn-icon {
+    width: 32px;
+    height: 30px;
+    min-width: 32px;
+    border-radius: 7px;
+    border: none;
+    background: transparent;
+    color: var(--tb-muted);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.02rem;
+    line-height: 1;
+    margin: 0;
+    transition: background .14s ease, color .14s ease;
+}
+.dashboard .toolbar .btn-icon::before { margin: 0; }
+.dashboard .toolbar .btn-icon:hover,
+.dashboard .change-dashboard .btn-icon:hover {
+    background: var(--tb-sunk);
+    color: var(--tb-navy);
+}
+.dashboard .toolbar .btn-icon.ti-trash:hover {
+    background: var(--tb-crit-bg);
+    color: var(--tb-crit);
+}
+:root[data-glpi-theme-dark="1"] .dashboard .toolbar.left-toolbar .change-dashboard,
+:root[data-glpi-theme-dark="1"] .dashboard > span.toolbar:not(.left-toolbar) {
+    background: var(--tb-surface-2);
+}
+:root[data-glpi-theme-dark="1"] .dashboard .toolbar .btn-icon:hover {
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+}
+
+/* =================================================================== */
+/* 8. System notice (the "change default passwords" nag) — slimmer      */
+/* =================================================================== */
+.dashboard-container .alert,
+#page .alert.alert-warning {
+    padding: 10px 14px;
+    font-size: 13.5px;
+    border-radius: 9px;
+}
+
+/* =================================================================== */
+/* 9. Legacy central view (Visão pessoal / grupo / global) — masonry.  */
+/*    Different engine from the gridstack dashboard: .masonry_grid >    */
+/*    .grid-item > .card, with .lazy-widget bodies that ajax-load.      */
+/* =================================================================== */
+/* panel cards → same modern surface + hover as the rest of the product */
+.masonry_grid .grid-item > .card {
+    border: 1px solid var(--tb-line, #e7e7ee) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 1px 2px rgba(15, 15, 56, .04), 0 10px 24px -16px rgba(15, 15, 56, .16) !important;
+    overflow: hidden;
+    transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+}
+.masonry_grid .grid-item > .card:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--tb-orange, #ff7800) 22%, var(--tb-line)) !important;
+    box-shadow: 0 4px 8px rgba(15, 15, 56, .06), 0 20px 38px -18px rgba(20, 0, 120, .2) !important;
+}
+/* title band → clean card header */
+.masonry_grid .card table.table > thead > tr > th {
+    background: var(--tb-surface-2, #fbfbfe);
+    color: var(--terabras-navy, #140078);
+    font-family: var(--tblr-font-sans-serif);
+    font-weight: 600;
+    font-size: .8rem;
+    letter-spacing: .035em;
+    text-transform: uppercase;
+    padding: 13px 16px;
+    border-bottom: 1px solid var(--tb-line, #e7e7ee);
+}
+.masonry_grid .card table.table > thead > tr > th .btn-icon {
+    color: var(--tb-muted, #63678a);
+    border-radius: 7px;
+}
+.masonry_grid .card table.table > thead > tr > th .btn-icon:hover {
+    background: var(--tb-sunk, #f1f2f8);
+    color: var(--terabras-orange, #ff7800);
+}
+/* loading: each lazy widget becomes a clean skeleton card with a centered
+   brand spinner, instead of the thin "broken" spinner rows */
+.masonry_grid .lazy-widget:has(.spinner-border) {
+    min-height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--tb-surface, #fff);
+    border: 1px solid var(--tb-line, #e7e7ee);
+    border-radius: 14px;
+}
+.masonry_grid .spinner-border,
+.lazy-widget .spinner-border { color: var(--terabras-navy, #140078) !important; }
