@@ -1276,13 +1276,15 @@ class Auth extends CommonGLPI
 
     private static function getMethodTypeLabel(int $auth_type, AuthLDAP|AuthMail|null $auth): string
     {
+        global $CFG_GLPI;
+
         $auth_type_label = match ($auth_type) {
             self::LDAP => AuthLDAP::getTypeName(1),
             self::MAIL => AuthMail::getTypeName(1),
             self::CAS => __('CAS'),
             self::X509 => __('x509 certificate authentication'),
             self::EXTERNAL => __('Other'),
-            self::DB_GLPI => __('GLPI internal database'),
+            self::DB_GLPI => sprintf(__('%s internal database'), $CFG_GLPI['app_name'] ?? 'GLPI'),
             self::API => __('API'),
             default => '',
         };
@@ -1679,11 +1681,11 @@ class Auth extends CommonGLPI
      */
     public static function getLoginAuthMethods()
     {
-        global $DB;
+        global $DB, $CFG_GLPI;
 
         $elements = [
             '_default'  => 'local',
-            'local'     => __("GLPI internal database"),
+            'local'     => sprintf(__('%s internal database'), $CFG_GLPI['app_name'] ?? 'GLPI'),
         ];
 
         // Get LDAP
