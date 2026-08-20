@@ -49,6 +49,26 @@ Never conflicts with upstream. Not tracked here.
 
 ---
 
+## Production hardening (SaaS deploy checklist)
+
+The dev container runs `GLPI_ENVIRONMENT_TYPE=development`, which shows the Symfony
+debug toolbar and **full PHP backtraces on error pages** (e.g. a 403 dumps a stack
+trace). This is a dev-only artifact — set these on the production deploy:
+
+- **`GLPI_ENVIRONMENT_TYPE=production`** — hides backtraces (clean, themed error page),
+  disables the debug toolbar, enables prod caching. Single most important prod flag.
+- **Precompile core SCSS at build time.** `css/glpi.scss` compiles in ~29 s cold and
+  sits right on the 30 s `max_execution_time`, so a cold cache after deploy yields a
+  flaky 500 on first paint. Warm it in the deploy step (request
+  `/front/css.php?file=css/glpi.scss&v=<hash>` once, or run GLPI's asset build) so no
+  user hits a cold compile. *(pipeline task #7)*
+- **Pin third-party plugins.** `plugins/*` (except `terabras*`) is gitignored. The
+  installed set — `news 1.14.1`, `escalade 2.10.6`, `fields 1.24.4`, `tag 2.14.6`,
+  `advancedforms 1.3.0` (all GLPI 11.0.x) — must be vendored or version-pinned in the
+  image so deploys are reproducible. *(pipeline task #8)*
+- Error pages already inherit the Terabras theme (navy chrome + styled alert); no code
+  change needed once backtraces are off.
+
 ## How to pull an upstream security fix
 
 ```

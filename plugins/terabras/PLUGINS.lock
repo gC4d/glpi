@@ -1,0 +1,18 @@
+# Terabras — pinned third-party plugin set (reproducible SaaS build)
+#
+# plugins/* (except terabras*) is gitignored, so the deploy image must fetch these
+# exact versions. All verified GLPI 11.0.x compatible (setup.php MIN/MAX_GLPI).
+# Source: official GLPI-team repos (github.com/pluginsGLPI/<name>).
+#
+# name           version   repo                          release asset
+news             1.14.1    pluginsGLPI/news              glpi-news-1.14.1.tar.bz2
+escalade         2.10.6    pluginsGLPI/escalade          glpi-escalade-2.10.6.tar.bz2
+fields           1.24.4    pluginsGLPI/fields            glpi-fields-1.24.4.tar.bz2
+tag              2.14.6    pluginsGLPI/tag               glpi-tag-2.14.6.tar.bz2
+advancedforms    1.3.0     pluginsGLPI/advancedforms     glpi-advancedforms-1.3.0.tar.bz2
+#
+# Fetch example (deploy step):
+#   gh release download <version> -R pluginsGLPI/<name> -p '*.tar.bz2'
+#   tar xjf glpi-<name>-<version>.tar.bz2 -C plugins/
+# Then activate (runs each plugin's install script — third-party code):
+#   php bin/console plugin:install <name> && php bin/console plugin:activate <name>
