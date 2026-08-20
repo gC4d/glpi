@@ -53,6 +53,24 @@ body.navbar-collapsed .page .glpi-logo {
     height: 64px;
 }
 
+/* Self-service (helpdesk) header is WHITE, but core hands it the light (white)
+   logo variant → invisible, leaving only the orange accent (the "tiny dot" bug).
+   Use the blue wordmark on the white header. In dark mode the header is dark, so
+   the default white logo stays correct there. */
+:root:not([data-glpi-theme-dark="1"]) body.helpdesk .navbar-brand .glpi-logo {
+    background: var(--glpi-logo-dark) no-repeat left center !important;
+    background-size: contain !important;
+    width: 150px !important;
+    height: 38px !important;
+    content: normal !important;
+}
+body.helpdesk .navbar-brand .glpi-logo {
+    width: 150px !important;
+    height: 38px !important;
+    background-size: contain !important;
+    background-position: left center !important;
+}
+
 /* ------------------------------------------------------------------ */
 /* 2. Brand colors — light (default) scope.                           */
 /* ------------------------------------------------------------------ */

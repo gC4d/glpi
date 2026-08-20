@@ -575,3 +575,46 @@ body.navbar-collapsed .sidebar .nav-link .ti { margin: 0 !important; }
 a:not(.btn):not(.nav-link):not(.page-link):not(.dropdown-item):hover {
     color: var(--tb-orange);
 }
+
+/* =================================================================== */
+/* 10. Self-service helpdesk portal (/Helpdesk) — the end-user face    */
+/* =================================================================== */
+/* Core derives the hero from --glpi-mainmenu-bg tinted to 80% L (→ GLPI
+   lavender). Repaint it as the brand navy→orange hero, matching the central
+   "Boa tarde" greeting, and rebrand the section backgrounds via tokens. */
+:root {
+    --glpi-helpdesk-tiles-section-bg: var(--tb-bg);
+    --glpi-helpdesk-tabs-section-bg: var(--tb-surface);
+}
+.helpdesk-home-container .search-banner {
+    background:
+        radial-gradient(130% 130% at 88% -10%, rgba(255, 120, 0, .30), transparent 55%),
+        linear-gradient(120deg, var(--tb-navy-lift) 0%, var(--tb-navy) 52%, var(--tb-navy-deep) 100%) !important;
+}
+/* heading legible on the navy hero */
+.search-banner .search-banner-content h1 {
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: -.02em;
+    text-shadow: 0 1px 20px rgba(15, 15, 56, .35);
+}
+/* the search field: crisp white card with brand focus ring */
+.search-banner .home-search {
+    border-radius: 11px;
+    border: 1px solid transparent;
+    box-shadow: 0 10px 30px -12px rgba(15, 15, 56, .5);
+}
+.search-banner .home-search:focus {
+    border-color: var(--tb-orange);
+    box-shadow: var(--tb-ring), 0 10px 30px -12px rgba(15, 15, 56, .5);
+}
+/* tiles: brand card treatment + orange hover (consistent with the rest) */
+.tiles-banner .tile,
+.tiles-banner a[class*="tile"] {
+    border-radius: 12px;
+    transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.tiles-banner .tile:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--tb-orange) 35%, var(--tb-line));
+}
