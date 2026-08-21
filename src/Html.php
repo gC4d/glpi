@@ -5986,13 +5986,18 @@ JS);
      */
     public static function getCopyrightMessage($withVersion = true)
     {
-        $message = "<a href=\"https://glpi-project.org/\" title=\"Powered by Teclib and contributors\" class=\"copyright\">";
-        $message .= "GLPI ";
-        // if required, add GLPI version (eg not for login page)
+        global $CFG_GLPI;
+
+        // Terabras white-label: use the product name (app_name) and drop the
+        // upstream "Teclib' and contributors" attribution + glpi-project.org link.
+        $app_name = $CFG_GLPI['app_name'] ?? 'Terabras';
+        $message = "<a class=\"copyright\">";
+        $message .= htmlescape($app_name) . " ";
+        // if required, add version (eg not for login page)
         if ($withVersion) {
             $message .= htmlescape(GLPI_VERSION) . " ";
         }
-        $message .= "Copyright (C) 2015-" . htmlescape(GLPI_YEAR) . " Teclib' and contributors"
+        $message .= "Copyright (C) 2015-" . htmlescape(GLPI_YEAR)
          . "</a>";
         return $message;
     }

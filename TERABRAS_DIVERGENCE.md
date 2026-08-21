@@ -22,6 +22,8 @@ cherry-pick critical/security fixes only.
 | `templates/layout/parts/user_header.html.twig` | About modal: logo `title`, version and copyright lines now read the product name (`config('app_name')` / "Terabras"); removed the upstream-version-advertising block that linked to glpi-project.org | The About modal markup is inline in a large shared header partial; shadowing the whole file via the seam would strand it from upstream changes to the user menu. | Low — 3 localized string edits + one block deletion. |
 | `templates/layout/page_card_notlogged.html.twig` | Login logo tooltip `title="GLPI"` → `title="{{ config('app_name') }}"` | Same partial-shadowing tradeoff as above; a one-attribute edit is cleaner. | Low — 1 line. |
 | `src/GLPIPDF.php` | PDF `Creator`/`Author` metadata `'GLPI'` → `$CFG_GLPI['app_name']` (added `global $CFG_GLPI`) | Hardcoded string in the PDF constructor; no hook. | Low — 3 lines. |
+| `src/autoload/CFG_GLPI.php` | Default `$CFG_GLPI['app_name']` `'GLPI'` → `'Terabras'` | The plugin's `POST_INIT` override does not run during **install** or on a plugin-less instance, so the brand had to move into the default itself (fixes the raw "GLPI" on the installer/login footer, auth "internal database" label, PDF/2FA). | Low — 1 line. |
+| `src/Html.php` | `getCopyrightMessage()`: hardcoded `"GLPI … Teclib' and contributors"` + glpi-project.org link → product name via `app_name`, attribution/link removed | Copyright string is built in PHP (not a template), so CSS/plugin cannot reach it on the installer/login where the plugin is not loaded. | Low — self-contained function; conflicts only if upstream rewrites the copyright markup. |
 
 ### Binary asset swaps (white-label logos/favicon)
 

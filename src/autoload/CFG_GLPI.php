@@ -44,7 +44,10 @@ global $CFG_GLPI;
 $CFG_GLPI = [];
 
 // set the default app_name
-$CFG_GLPI['app_name'] = 'GLPI';
+// Terabras white-label: default product name is Terabras (the terabras plugin also
+// re-affirms this at POST_INIT, but that hook does not run during install or on a
+// plugin-less instance, so the default itself must carry the brand).
+$CFG_GLPI['app_name'] = 'Terabras';
 
 // Languages dictionnary:
 // 0 => regionalized lang code
