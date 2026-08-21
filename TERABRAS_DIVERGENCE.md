@@ -19,6 +19,7 @@ cherry-pick critical/security fixes only.
 |------|--------|--------------------------|------------------------|
 | `src/Glpi/Application/View/TemplateRenderer.php` | `prependPath('/templates.terabras')` on the Twig loader (guarded by `is_dir`) | GLPI plugins only register an `@plugin` namespace; they cannot shadow a core template's logical name. This one seam enables all UI overrides. | Low — 6 added lines next to the loader constructor; conflicts only if upstream rewrites loader setup. |
 | `front/plugin.form.php` | Reject `unactivate`/`uninstall`/`clean` actions targeting the `terabras` plugin (white-label hardening; the plugin must stay always-on) | No pre-action hook exists to veto plugin lifecycle actions; must guard the controller. | Low — a self-contained guard block before the action switch; conflicts only if upstream rewrites this short controller. |
+| `install/install.php` | `step8()` (install finalize): auto-install + auto-activate the `terabras` plugin | GLPI never auto-activates plugins on install, so a fresh instance shipped un-branded **and** exposed `terabras` as an inactive/removable entry in the plugins list (the `ADD_DEFAULT_WHERE` hide-hook only runs once the plugin is active). Enabling it at finalize closes both. | Low — self-contained block before `Session::destroy()`; uses only public `Plugin` API. **Only covers the web wizard** — the CLI `database:install` path does not run `step8`, so provisioning must also run `plugin:install terabras && plugin:activate terabras` (see deploy checklist). |
 | `templates/layout/parts/user_header.html.twig` | About modal: logo `title`, version and copyright lines now read the product name (`config('app_name')` / "Terabras"); removed the upstream-version-advertising block that linked to glpi-project.org | The About modal markup is inline in a large shared header partial; shadowing the whole file via the seam would strand it from upstream changes to the user menu. | Low — 3 localized string edits + one block deletion. |
 | `templates/layout/page_card_notlogged.html.twig` | Login logo tooltip `title="GLPI"` → `title="{{ config('app_name') }}"` | Same partial-shadowing tradeoff as above; a one-attribute edit is cleaner. | Low — 1 line. |
 | `src/GLPIPDF.php` | PDF `Creator`/`Author` metadata `'GLPI'` → `$CFG_GLPI['app_name']` (added `global $CFG_GLPI`) | Hardcoded string in the PDF constructor; no hook. | Low — 3 lines. |
@@ -70,6 +71,14 @@ trace). This is a dev-only artifact — set these on the production deploy:
   image so deploys are reproducible. *(pipeline task #8)*
 - Error pages already inherit the Terabras theme (navy chrome + styled alert); no code
   change needed once backtraces are off.
+- **Activate the `terabras` plugin as part of provisioning.** The web installer now
+  auto-activates it (`install/install.php` §1), but the CLI path does not, so any
+  scripted deploy must run, right after `database:install`:
+  ```
+  php bin/console plugin:install terabras && php bin/console plugin:activate terabras
+  ```
+  Without this the instance ships un-branded and `terabras` shows as an inactive entry
+  in Setup → Plugins (the list-hiding hook only runs while the plugin is active).
 
 ## How to pull an upstream security fix
 

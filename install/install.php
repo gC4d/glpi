@@ -427,6 +427,22 @@ function step8(): void
         ]
     );
 
+    // Terabras white-label: the branding plugin must be active out of the box, so a
+    // freshly installed instance is already branded and the plugin never sits in the
+    // (inactive, visible) plugins list. GLPI does not auto-activate plugins on install,
+    // so do it here once the database is populated.
+    $terabras = new Plugin();
+    $terabras->checkStates(true); // discover plugins present on disk
+    if ($terabras->getFromDBbyDir('terabras')) {
+        $terabras_id = (int) $terabras->fields['id'];
+        if (!$terabras->isInstalled('terabras')) {
+            $terabras->install($terabras_id);
+        }
+        if (!$terabras->isActivated('terabras')) {
+            $terabras->activate($terabras_id);
+        }
+    }
+
     Session::destroy(); // Remove session data (debug mode for instance) set by web installation
 
     TemplateRenderer::getInstance()->display('install/step8.html.twig');
