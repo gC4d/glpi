@@ -37,12 +37,14 @@
 
 /*  ############# Definition of install and update styles ############# */
 
+/* Terabras white-label: brand the installer (navy #140078 / orange #FF7800,
+   deep-navy surface #0F0F38) — the branding plugin is not loaded during install. */
 :root {
-    --tblr-body-bg: #1b2f62 !important;
+    --tblr-body-bg: #0f0f38 !important;
     --tblr-body-color: #fff !important;
-    --tblr-link-color: #fec95c !important;
+    --tblr-link-color: #ff7800 !important;
     --tblr-info: #c3ddff !important;
-    --tblr-info-fg: #1b2f62 !important;
+    --tblr-info-fg: #0f0f38 !important;
     --tblr-muted-rgb: 238, 238, 238 !important;
     --tblr-secondary-fg: var(--tblr-body-color) !important;
 }
@@ -70,7 +72,7 @@ a {
     text-align: left;
     position: relative;
     padding: 10px;
-    background: #3a5693;
+    background: #140078;
 }
 
 #logo_bloc {
@@ -78,9 +80,10 @@ a {
     top: -25px;
     padding: 0;
     margin: 0;
-    width: 145px;
-    height: 80px;
-    background: url("../pics/login_logo_glpi.png")  no-repeat;
+    width: 240px;
+    height: 64px;
+    background: url("../pics/login_logo_terabras.png") no-repeat left center;
+    background-size: contain;
 }
 
 p {
@@ -129,7 +132,7 @@ p {
 
 h2 {
     text-align: center;
-    color: #fec95c;
+    color: #ff7800;
 }
 
 h3 {

@@ -59,12 +59,18 @@ if (isset($_POST["language"]) && isset($CFG_GLPI["languages"][$_POST["language"]
  */
 function header_html(string $etape): void
 {
+    global $CFG_GLPI;
+
+    // Terabras white-label: the installer is shown before any plugin loads, so the
+    // product name comes straight from the app_name default.
+    $app_name = $CFG_GLPI['app_name'] ?? 'Terabras';
+
     // Send UTF8 Headers
     header("Content-Type: text/html; charset=UTF-8");
 
     TemplateRenderer::getInstance()->display('layout/parts/head.html.twig', [
         'lang'  => $_SESSION['glpilanguage'],
-        'title' => __('GLPI setup'),
+        'title' => sprintf(__('%s setup'), $app_name),
         'css_files' => [
             ['path' => 'lib/tabler.css'],
             ['path' => 'lib/base.css'],
@@ -86,7 +92,7 @@ function header_html(string $etape): void
     echo "<div id='principal'>";
     echo "<div id='bloc'>";
     echo "<div id='logo_bloc'></div>";
-    echo "<h2>" . __s('GLPI setup') . "</h2>";
+    echo "<h2>" . sprintf(__s('%s setup'), htmlescape($app_name)) . "</h2>";
     echo "<br><h3>" . htmlescape($etape) . "</h3>";
 }
 
