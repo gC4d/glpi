@@ -43,10 +43,25 @@
     --tblr-body-bg: #0f0f38 !important;
     --tblr-body-color: #fff !important;
     --tblr-link-color: #ff7800 !important;
+    --tblr-primary: #ff7800 !important;
+    --tblr-primary-rgb: 255, 120, 0 !important;
     --tblr-info: #c3ddff !important;
     --tblr-info-fg: #0f0f38 !important;
     --tblr-muted-rgb: 238, 238, 238 !important;
     --tblr-secondary-fg: var(--tblr-body-color) !important;
+}
+
+/* Brand the primary (Continue) button — stock Tabler primary is off-brand gold. */
+.btn-primary {
+    --tblr-btn-color: #fff;
+    --tblr-btn-bg: #ff7800;
+    --tblr-btn-border-color: #ff7800;
+    --tblr-btn-color-hover: #fff;
+    --tblr-btn-bg-hover: #e56b00;
+    --tblr-btn-border-color-hover: #e56b00;
+    --tblr-btn-color-active: #fff;
+    --tblr-btn-bg-active: #cc5f00;
+    --tblr-btn-border-color-active: #cc5f00;
 }
 
 .select2-container {
@@ -71,18 +86,22 @@ a {
     margin: 0 auto;
     text-align: left;
     position: relative;
-    padding: 10px;
+    padding: 84px 28px 28px;
     background: #140078;
+    border-radius: 14px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
 }
 
 #logo_bloc {
     position: absolute;
-    top: -25px;
+    top: 24px;
+    left: 0;
+    right: 0;
     padding: 0;
-    margin: 0;
-    width: 240px;
-    height: 64px;
-    background: url("../pics/login_logo_terabras.png") no-repeat left center;
+    margin: 0 auto;
+    width: 220px;
+    height: 46px;
+    background: url("../pics/login_logo_terabras.png") no-repeat center center;
     background-size: contain;
 }
 
@@ -131,6 +150,7 @@ p {
 }
 
 h2 {
+    margin-top: 4px;
     text-align: center;
     color: #ff7800;
 }
