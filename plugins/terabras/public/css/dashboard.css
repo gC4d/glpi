@@ -256,6 +256,42 @@
     transform: scale(1.06);
 }
 
+/* --- Fit to the card (fixes overflow on GLPI's small default tiles) ---
+   GLPI sizes the number with fitText() (js), but the fixed `2.5rem` above wins
+   and, on the compact 2x2 tiles of the default central dashboard, the number
+   overruns the tile and slides under the icon badge. Turn each single-value
+   tile into a size container and let the number, padding and icon scale with
+   it: the clamp upper bounds reproduce the lush look on large tiles, the lower
+   bounds keep small tiles legible and clear of the icon. Scoped to single-value
+   tiles so the multi-line summary variant (section 4) is untouched. */
+.dashboard .card.big-number:not(.summary-numbers) {
+    container-type: size;
+    padding: clamp(10px, 12cqh, 16px) clamp(12px, 13cqw, 22px);
+}
+.dashboard .card.big-number:not(.summary-numbers) .content {
+    max-width: 100%;
+    box-sizing: border-box;
+    /* reserve the icon column so the number never renders beneath the badge */
+    padding-inline-end: clamp(30px, 40cqh, 54px);
+    overflow: hidden;
+}
+.dashboard .card.big-number:not(.summary-numbers) .formatted-number {
+    max-width: 100%;
+    overflow: hidden;
+}
+.dashboard .card.big-number:not(.summary-numbers) .formatted-number .number,
+.dashboard .card.big-number:not(.summary-numbers) .formatted-number .suffix {
+    font-size: clamp(1.05rem, min(34cqh, 15cqw), 2.5rem) !important;
+    white-space: nowrap;
+}
+.dashboard .card.big-number:not(.summary-numbers) .main-icon {
+    width: clamp(26px, 42cqh, 44px) !important;
+    height: clamp(26px, 42cqh, 44px) !important;
+    top: clamp(8px, 12cqh, 18px) !important;
+    inset-inline-end: clamp(8px, 12cqh, 18px) !important;
+    font-size: clamp(0.85rem, 20cqh, 1.3rem) !important;
+}
+
 /* =================================================================== */
 /* 4. Summary-numbers (multi-line KPI stack)                           */
 /* =================================================================== */
