@@ -43,7 +43,9 @@ phpunit.xml
 /tests/web/error.log
 /inventory-vendors/*.json
 /locales/*.mo
-/inc/downstream.php
+# Terabras IS the downstream distribution, so its downstream.php is product
+# configuration and must be version-controlled (see TERABRAS_DIVERGENCE.md).
+!/inc/downstream.php
 /docker-compose.override.yaml
 /.devcontainer/docker-compose.override.yaml
 /.devcontainer/custom

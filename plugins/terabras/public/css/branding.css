@@ -129,12 +129,10 @@ a.copyright::after {
     display: inline-block;
 }
 
-/* Replace the GLPI logo in the admin "About" dialog with the Terabras mark. */
-img[title="GLPI Logo"] {
-    content: url("/plugins/terabras/img/symbol-blue.png");
-    max-width: 96px;
-    height: auto;
-}
+/* The About dialog's mark needs no rule: user_header.html.twig points it at
+   pics/logos/logo-GLPI-100-grey.png, which is the Terabras wordmark (the upstream
+   marks under public/pics are replaced at build time — see
+   plugins/terabras/tools/generate_logos.py), and sizes itself with height:auto. */
 
 /* The dashboard FULLSCREEN mode uses a separate, hardcoded logo element
    (span.glpi_logo — underscore, not the themed .glpi-logo) pointing at a GLPI

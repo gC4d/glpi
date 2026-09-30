@@ -1,0 +1,99 @@
+# Terabras — product stack.
+#
+# Separate from `docker-compose.yaml`, which is upstream GLPI's *development*
+# environment and is deliberately left untouched.
+#
+#   docker compose -f docker-compose.terabras.yaml up -d --build
+#
+# What this stack guarantees, and the dev one does not:
+#   * GLPI's configuration and variable data live on named volumes OUTSIDE the
+#     application tree (GLPI_CONFIG_DIR / GLPI_VAR_DIR), so recreating or
+#     rebuilding the app container cannot send an installed instance back to the
+#     "GLPI must be configured" screen;
+#   * PHP upload limits are set from the environment, and GLPI's advertised
+#     document size limit is realigned to them on every boot;
+#   * the database user can read the server's timezone tables, so timezone support
+#     is enabled at install time instead of needing a manual console command.
+services:
+  app:
+    container_name: "terabras-app"
+    build:
+      context: ".docker/terabras"
+      args:
+        PHP_VERSION: "8.4"
+    restart: "unless-stopped"
+    volumes:
+      # Application code. Replace with a COPY in the image for an immutable deploy;
+      # the persistence contract below does not change either way.
+      - ".:/var/www/glpi:rw"
+      # Installation state. THIS is what must survive a container replacement.
+      - "glpi_config:/var/glpi/config:rw"
+      - "glpi_files:/var/glpi/files:rw"
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    environment:
+      GLPI_ENVIRONMENT_TYPE: "production"
+      GLPI_CONFIG_DIR: "/var/glpi/config"
+      GLPI_VAR_DIR: "/var/glpi/files"
+
+      # Effective upload ceiling of the stack. Raise both together; the provisioning
+      # step propagates min(upload, post) to GLPI's `document_max_size`.
+      PHP_UPLOAD_MAX_FILESIZE: "128M"
+      PHP_POST_MAX_SIZE: "144M"
+      PHP_MEMORY_LIMIT: "512M"
+
+      # "auto" resolves session.cookie_secure from the instance's recorded public
+      # URL on every boot, so moving the site behind TLS does not leave a stale
+      # security warning on the home page. Force it with 0/1 if you front the
+      # container with a TLS-terminating proxy that GLPI cannot see.
+      PHP_SESSION_COOKIE_SECURE: "${PHP_SESSION_COOKIE_SECURE:-auto}"
+
+      # The public URL users reach. Set it for any real deployment: the installer
+      # otherwise guesses it from a Referer header, which a reverse proxy rewrites.
+      # It drives every generated link and e-mail, and the cookie_secure decision.
+      TERABRAS_PUBLIC_URL: "${TERABRAS_PUBLIC_URL:-}"
+
+      # Administrator provisioned on first install. Leave TERABRAS_ADMIN_PASSWORD
+      # unset to have a strong one generated and displayed once at the end of the
+      # wizard (or in the entrypoint log for a CLI install).
+      #
+      # The login defaults to "admin", not GLPI's factory "glpi": the account name
+      # is shown to the user (the home page greets them by it), so leaving it would
+      # put another product's name on the dashboard. Provisioning renames the
+      # account only while it still carries the factory password, so an instance
+      # whose administrator has already set a password is never touched.
+      TERABRAS_ADMIN_USER: "${TERABRAS_ADMIN_USER:-admin}"
+      TERABRAS_ADMIN_PASSWORD: "${TERABRAS_ADMIN_PASSWORD:-}"
+
+      # Third-party plugins to install and activate, by directory name. Empty means
+      # "branding only". Activating one runs that plugin's own installer, so the set is
+      # declared here rather than inferred from what happens to be in plugins/.
+      # Pinned versions: plugins/terabras/PLUGINS.lock
+      TERABRAS_PLUGINS: "${TERABRAS_PLUGINS:-}"
+
+      # One-time, data-rewriting migration of legacy Formcreator forms into the core
+      # forms tables. Off by default: provisioning runs on every boot and that is the
+      # wrong moment to rewrite customer data unattended.
+      TERABRAS_MIGRATE_FORMCREATOR: "${TERABRAS_MIGRATE_FORMCREATOR:-}"
+
+  db:
+    container_name: "terabras-db"
+    image: "mariadb:11.8"
+    restart: "unless-stopped"
+    volumes:
+      - "db:/var/lib/mysql"
+      - ".docker/terabras/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql:ro"
+    environment:
+      MARIADB_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-glpi}"
+      MARIADB_DATABASE: "${DB_NAME:-glpi}"
+      MARIADB_USER: "${DB_USER:-glpi}"
+      MARIADB_PASSWORD: "${DB_PASSWORD:-glpi}"
+    expose:
+      - "3306"
+
+volumes:
+  db:
+  glpi_config:
+  glpi_files:

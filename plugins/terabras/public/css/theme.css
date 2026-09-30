@@ -618,3 +618,99 @@ a:not(.btn):not(.nav-link):not(.page-link):not(.dropdown-item):hover {
     transform: translateY(-3px);
     border-color: color-mix(in srgb, var(--tb-orange) 35%, var(--tb-line));
 }
+
+/* =================================================================== */
+/* 9. Horizontal (top) navigation — Setup > My settings > "Page layout" */
+/* =================================================================== */
+/*
+ * In this layout GLPI moves the main menu OUT of the navy sidebar and INTO the
+ * header, which then carries `.topbar` and `--glpi-mainmenu-fg` (white) text.
+ * Section 4 above paints `.page > header.navbar` with the light surface, which
+ * is right for the vertical layout (where the header is a light utility bar) but
+ * turned the horizontal menu into white-on-white: every module label rendered at
+ * `#f4f6fb` on `#ffffff`, so the menu looked empty even though the items were in
+ * the DOM and clickable.
+ *
+ * Scope: `body.central` only. The self-service helpdesk is ALWAYS horizontal
+ * (SessionExtension::getPageLayout) and its white header is the approved design;
+ * branding.css already handles its logo.
+ */
+body.central.horizontal-layout > .page > header.navbar.topbar,
+body.central.horizontal-layout header.navbar.topbar {
+    background: var(--tb-navy) !important;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, .08), 0 6px 18px -10px rgba(15, 15, 56, .5) !important;
+}
+
+/* Everything riding on the navy bar has to be re-lit: section 4 styles the user
+   chip, the icon buttons and the toggler for a LIGHT bar. */
+body.central.horizontal-layout .topbar .nav-link .pe-2 > div:first-child,
+body.central.horizontal-layout .topbar .navbar-nav .nav-item.dropdown > .nav-link {
+    color: #ffffff;
+}
+body.central.horizontal-layout .topbar .nav-link .text-muted-menu,
+body.central.horizontal-layout .topbar .nav-link [data-testid="current-entity"] {
+    color: var(--glpi-mainmenu-fg-muted, rgba(255, 255, 255, .7)) !important;
+}
+body.central.horizontal-layout .topbar .navbar-nav .nav-item.dropdown > .nav-link:hover {
+    background: rgba(255, 255, 255, .12);
+}
+body.central.horizontal-layout .topbar .nav-link.dropdown-toggle::after { color: rgba(255, 255, 255, .7); }
+body.central.horizontal-layout .topbar .btn-icon,
+body.central.horizontal-layout .topbar .navbar-toggler { color: rgba(255, 255, 255, .85); }
+body.central.horizontal-layout .topbar .btn-icon:hover { background: rgba(255, 255, 255, .12); color: #fff; }
+/* The avatar already sits on navy — a navy chip on navy disappears. */
+body.central.horizontal-layout .topbar .nav-link .avatar {
+    background-color: rgba(255, 255, 255, .16) !important;
+    box-shadow: none;
+}
+
+/* ---- Fitting every module in the bar ------------------------------- */
+/*
+ * GLPI collapses this menu into the hamburger below `navbar-expand-xl` (1200px).
+ * Between 1200px and ~1450px the six module labels plus the logo and the user
+ * chip are wider than the viewport, so the header overflowed horizontally and
+ * the user chip was clipped off the right edge (1389px of content in 1280px at
+ * 100% zoom — and the same thing happens on a wide screen at 125%/150% zoom,
+ * which is what most "it works on my machine" reports miss).
+ *
+ * Fix in two stages, so nothing is ever dropped:
+ *   1. below 1450px the items get tighter and, below 1320px, icon-free;
+ *   2. as a hard backstop the row wraps instead of overflowing.
+ * Wrapping (rather than `overflow-x`) is deliberate: an overflow container would
+ * clip the dropdowns, which must be able to escape the bar.
+ */
+body.central.horizontal-layout .topbar #navbar-menu .navbar-nav {
+    flex-wrap: wrap;
+    row-gap: 2px;
+}
+body.central.horizontal-layout .topbar .header-container { flex-wrap: nowrap; }
+
+@media (max-width: 1450px) {
+    body.central.horizontal-layout .topbar #navbar-menu .navbar-nav > .nav-item > .nav-link {
+        padding-inline: 7px;
+        font-size: 13.5px;
+    }
+    body.central.horizontal-layout .topbar #navbar-menu .nav-item i { margin-right: 0.2em; }
+    /* The wordmark is the widest fixed block in the bar; the reduced mark keeps
+       the brand present while giving the menu ~110px back. */
+    body.central.horizontal-layout .topbar .navbar-brand .glpi-logo {
+        width: 34px !important;
+        background-image: var(--glpi-logo-reduced) !important;
+        background-position: center !important;
+    }
+}
+
+@media (max-width: 1320px) {
+    body.central.horizontal-layout .topbar #navbar-menu .nav-item > .nav-link > i { display: none; }
+    body.central.horizontal-layout .topbar #navbar-menu .navbar-nav > .nav-item > .nav-link {
+        padding-inline: 6px;
+        font-size: 13px;
+    }
+    /* The entity line under the user name is the first thing worth losing. */
+    body.central.horizontal-layout .topbar .nav-link [data-testid="current-entity"] { display: none; }
+}
+
+/* Dropdowns must never be clipped by the bar, and must stay above the
+   sticky secondary bar that sits directly under it. */
+body.central.horizontal-layout .topbar { overflow: visible; }
+body.central.horizontal-layout .topbar #navbar-menu .dropdown-menu { z-index: 1040; }

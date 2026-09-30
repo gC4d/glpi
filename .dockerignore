@@ -1,0 +1,20 @@
+# Terabras application image build context.
+#
+# `.git` matters beyond size: GLPI derives GLPI_INSTALL_MODE from `is_dir(.git)`
+# (\Glpi\Application\SystemConfigurator), so a shipped repository makes Setup >
+# General > System report the product as a GIT checkout rather than a release.
+.git
+.github
+node_modules
+tests/cypress
+tests/e2e
+*.log
+
+# Never bake an instance's state into the image: configuration and variable data
+# belong on the volumes (GLPI_CONFIG_DIR / GLPI_VAR_DIR).
+config/config_db.php
+config/config_db.php.bak
+config/glpicrypt.key
+config/oauth.pem
+config/oauth.pub
+files

@@ -41,6 +41,7 @@ use Glpi\System\Requirement\DbEngine;
 use Glpi\System\Requirement\DbTimezones;
 use Glpi\System\RequirementsManager;
 use Glpi\Toolbox\Filesystem;
+use GlpiPlugin\Terabras\Provisioning;
 
 use function Safe\file_get_contents;
 
@@ -433,25 +434,19 @@ function step8(): void
         ]
     );
 
-    // Terabras white-label: the branding plugin must be active out of the box, so a
-    // freshly installed instance is already branded and the plugin never sits in the
-    // (inactive, visible) plugins list. GLPI does not auto-activate plugins on install,
-    // so do it here once the database is populated.
-    $terabras = new Plugin();
-    $terabras->checkStates(true); // discover plugins present on disk
-    if ($terabras->getFromDBbyDir('terabras')) {
-        $terabras_id = (int) $terabras->fields['id'];
-        if (!$terabras->isInstalled('terabras')) {
-            $terabras->install($terabras_id);
-        }
-        if (!$terabras->isActivated('terabras')) {
-            $terabras->activate($terabras_id);
-        }
-    }
+    // Terabras product provisioning: activates the branding plugin, enables timezone
+    // support, applies the product configuration defaults and removes GLPI's published
+    // default credentials. Idempotent, and shared with the CLI path
+    // (`php bin/console plugins:terabras:postinstall`) so both installs converge on the
+    // same state. See TERABRAS_DIVERGENCE.md.
+    require_once GLPI_ROOT . '/plugins/terabras/src/Provisioning.php';
+    $provisioning = Provisioning::run();
 
     Session::destroy(); // Remove session data (debug mode for instance) set by web installation
 
-    TemplateRenderer::getInstance()->display('install/step8.html.twig');
+    TemplateRenderer::getInstance()->display('install/step8.html.twig', [
+        'terabras_admin' => $provisioning['admin'],
+    ]);
 }
 
 

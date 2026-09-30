@@ -71,6 +71,7 @@ final class RulesManager
             // in database was corrupted/deleted.
             $initialized_collections = [];
         }
+        $already_initialized = $initialized_collections;
 
         foreach ($rulecollections_types as $rulecollection_type) {
             if (
@@ -94,6 +95,17 @@ final class RulesManager
             // Mark collection as already initialized, to not reinitialize it on next update
             // if admin remove all corresponding rules.
             $initialized_collections[] = get_class($rulecollection);
+        }
+
+        // Persist once, outside the loop.
+        //
+        // Writing inside the loop stored the exact same growing list N times, and since
+        // `Config` is a historized item each write appended a row to the configuration
+        // history: a plain install produced ~9 "initialized_rules_collections" entries
+        // under Setup > General > Historical before the administrator had touched
+        // anything. One write is equivalent (the value is cumulative) and leaves a single
+        // history entry.
+        if ($initialized_collections !== $already_initialized) {
             Config::setConfigurationValues(
                 'core',
                 ['initialized_rules_collections' => json_encode($initialized_collections)]

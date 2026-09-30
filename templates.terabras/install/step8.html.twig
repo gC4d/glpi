@@ -1,0 +1,75 @@
+{#
+ # ---------------------------------------------------------------------
+ #
+ # GLPI - Gestionnaire Libre de Parc Informatique
+ #
+ # http://glpi-project.org
+ #
+ # @copyright 2015-2026 Teclib' and contributors.
+ # @licence   https://www.gnu.org/licenses/gpl-3.0.html
+ #
+ # ---------------------------------------------------------------------
+ #
+ # LICENSE
+ #
+ # This file is part of GLPI.
+ #
+ # This program is free software: you can redistribute it and/or modify
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation, either version 3 of the License, or
+ # (at your option) any later version.
+ #
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+ #
+ # You should have received a copy of the GNU General Public License
+ # along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ #
+ # ---------------------------------------------------------------------
+ #}
+
+{#
+ # Terabras override of `install/step8.html.twig`.
+ #
+ # Upstream ends the wizard by printing GLPI's four published default credentials
+ # (glpi/glpi, tech/tech, normal/normal, post-only/postonly). Terabras provisioning
+ # (\GlpiPlugin\Terabras\Provisioning) has just deactivated the three service
+ # accounts and replaced the administrator password, so that list would be both
+ # wrong and a security hazard.
+ #
+ # `terabras_admin.password` is non-null only when THIS run generated one — when the
+ # password came from `TERABRAS_ADMIN_PASSWORD` it is already known to whoever
+ # provisioned the instance and is never echoed back.
+ #}
+
+<h2>{{ __("The installation is finished") }}</h2>
+
+{% if terabras_admin is not null and terabras_admin.password is not null %}
+   <div class="alert alert-warning" role="alert">
+      <h4 class="alert-heading">{{ __("Administrator account") }}</h4>
+      <p>
+         {{ __("This password is shown only once. Copy it now and store it somewhere safe.") }}
+      </p>
+      <ul class="list-unstyled mb-0">
+         <li><strong>{{ __("Login") }}:</strong> <code>{{ terabras_admin.name }}</code></li>
+         <li><strong>{{ __("Password") }}:</strong> <code>{{ terabras_admin.password }}</code></li>
+      </ul>
+   </div>
+{% elseif terabras_admin is not null %}
+   <p>
+      {{ __("The administrator account %s was configured with the password provided to the installer.")|format(terabras_admin.name) }}
+   </p>
+{% endif %}
+
+<p>
+   {{ __("You can create, modify or delete accounts once logged in.") }}
+</p>
+
+<p class="center">
+   <a class="btn btn-primary" href="../index.php">
+      <i class="fas fa-thumbs-up me-1"></i>
+      {{ __("Use %s")|format(config('app_name')|default('Terabras')) }}
+   </a>
+</p>
