@@ -156,7 +156,11 @@ curl -s -c "$JAR" -b "$JAR" -X POST "$BASE_URL/Install/InitDatabase" \
   -H "Content-Type: application/x-www-form-urlencoded;" \
   --max-time 60 -o "$WORK/initdb.txt"
 
-PROGRESS_KEY="$(tr -cd 'a-f0-9' < "$WORK/initdb.txt")"
+# The key is derived from the session id, whose alphabet depends on
+# session.sid_bits_per_character — it is NOT necessarily hexadecimal. Strip only
+# whitespace, or the key gets mangled and every poll 404s (which silently looks
+# like "finished" and races the wizard into a half-built schema).
+PROGRESS_KEY="$(tr -d '[:space:]' < "$WORK/initdb.txt")"
 printf '  waiting for the database initialisation job (%s)…' "${PROGRESS_KEY:0:8}"
 for _ in $(seq 1 450); do
   curl -s -c "$JAR" -b "$JAR" "$BASE_URL/progress/check/$PROGRESS_KEY" -o "$WORK/progress.json"

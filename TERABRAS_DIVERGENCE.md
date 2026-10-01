@@ -187,6 +187,54 @@ entrypoint publishes it as an Apache `SetEnv` inside the vhost, because the base
 own vhost pins `GLPI_ENVIRONMENT_TYPE=development` and a vhost-level `SetEnv` beats a
 server-level one.
 
+### Deployments without shell access
+
+Some customers are on shared hosting with nothing but FTP / a file manager —
+no composer, no npm, no console. `plugins/terabras/tools/build-deploy-package.sh`
+produces an archive that only has to be uploaded:
+
+```
+plugins/terabras/tools/build-deploy-package.sh            # builds, then packages
+plugins/terabras/tools/build-deploy-package.sh --skip-build   # package the tree as-is
+```
+
+It exists because **a `git clone` is not deployable**: `.gitignore` excludes
+`vendor/`, `public/lib/`, `public/build/`, `public/css_compiled/` and
+`locales/*.mo`, so an uploaded checkout dies on
+`require vendor/autoload.php` — and, once that is fixed, serves an unstyled UI
+with every string in English.
+
+| Normally a console step | In the package |
+|---|---|
+| `composer install` | baked in, **re-dumped `--no-dev`** |
+| `npm run build` | baked in |
+| `tools:locales:compile` | baked in (`locales/*.mo`) |
+| `build:compile_scss` | baked in (`public/css_compiled/`) |
+| `database:install` | the web wizard |
+| `plugins:terabras:postinstall` | already runs inside the wizard's final step |
+| `php.ini` | `public/.user.ini`, plus a `.htaccess` variant for mod_php |
+| cron | the host's scheduler, or GLPI's internal mode — nothing can bake this in |
+
+Three traps the script guards against, each found by actually installing the
+archive on a PHP 8.2 host with no shell:
+
+1. **A dev autoloader.** A working tree is installed *with* dev dependencies, and
+   that autoloader eagerly requires `tests/src/autoload/functions.php` — a path
+   the package deliberately excludes. The script re-dumps `--no-dev` and then
+   refuses to ship if any eagerly-required file is missing.
+2. **Translations arriving too late.** Provisioning copies the catalogues, but on
+   this deployment it only runs in the wizard's *final* step — the same request
+   that already loaded the translator, so that last screen rendered in English.
+   The package pre-deploys them to `files/_locales/core/`.
+3. **PHP limits applied after the fact.** GLPI records `document_max_size` from
+   whatever PHP reports *at install time*, and here provisioning never runs
+   again to correct it. The printed instructions put the limits before the
+   wizard, and call out that `.user.ini` is ignored under mod_php.
+
+The administrator login default (`admin`) therefore lives in
+`Provisioning::DEFAULT_ADMIN_LOGIN`, not only in the compose file: this
+deployment has no environment to read.
+
 ### Environment
 
 | Variable | Default | Meaning |

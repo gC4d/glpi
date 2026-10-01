@@ -41,8 +41,19 @@ final class Provisioning
     /** Default GLPI accounts that must never ship active with their published password. */
     public const DEFAULT_ACCOUNTS = ['tech', 'normal', 'post-only'];
 
-    /** Login of the account Terabras promotes to product administrator. */
-    public const ADMIN_ACCOUNT = 'glpi';
+    /** The administrator account GLPI creates at install time. */
+    public const FACTORY_ACCOUNT = 'glpi';
+
+    /**
+     * What that account is renamed to when `TERABRAS_ADMIN_USER` is not set.
+     *
+     * The login is shown to the user — the home page greets them by it — so leaving
+     * GLPI's factory name would put another product's name on the dashboard. This
+     * default lives HERE, not only in docker-compose.terabras.yaml, because a
+     * deployment without a container (shared hosting installed through the web
+     * wizard) has no environment to read.
+     */
+    public const DEFAULT_ADMIN_LOGIN = 'admin';
 
     /**
      * Run every provisioning step.
@@ -320,14 +331,14 @@ final class Provisioning
         }
 
         $admin = new User();
-        if (!$admin->getFromDBbyName(self::ADMIN_ACCOUNT)) {
+        if (!$admin->getFromDBbyName(self::FACTORY_ACCOUNT)) {
             return null;
         }
 
-        $admin_name = getenv('TERABRAS_ADMIN_USER') ?: self::ADMIN_ACCOUNT;
+        $admin_name = getenv('TERABRAS_ADMIN_USER') ?: self::DEFAULT_ADMIN_LOGIN;
 
         // Only act while the factory password is still in place.
-        if (!password_verify(self::ADMIN_ACCOUNT, (string) $admin->fields['password'])) {
+        if (!password_verify(self::FACTORY_ACCOUNT, (string) $admin->fields['password'])) {
             return null; // already secured by a previous run or by an administrator
         }
 

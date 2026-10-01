@@ -38,6 +38,8 @@ phpunit.xml
 .package.hash
 /public/build/
 /public/css_compiled/
+# Release archives produced by plugins/terabras/tools/build-deploy-package.sh
+/dist/
 /public/js/
 /public/lib/
 /tests/web/error.log
