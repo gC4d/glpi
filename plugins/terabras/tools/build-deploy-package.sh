@@ -25,6 +25,7 @@
 # Options:
 #     --out DIR       where to write the archive (default: ./dist)
 #     --skip-build    trust the artefacts already in the working tree
+#     --format F      tar.gz | zip | both   (default: both)
 #
 # Environment (all optional, written into the shipped .user.ini):
 #     PHP_UPLOAD_MAX_FILESIZE   default 128M
@@ -37,11 +38,15 @@ cd "$(dirname "$0")/../../.."
 ROOT="$PWD"
 OUT="$ROOT/dist"
 SKIP_BUILD=0
+# cPanel's File Manager extracts .zip most reliably; .tar.gz keeps the archive
+# roughly half the size. Default to both so whoever uploads can pick.
+FORMAT="both"
 
 while [ $# -gt 0 ]; do
   case "$1" in
     --out) OUT="$2"; shift 2 ;;
     --skip-build) SKIP_BUILD=1; shift ;;
+    --format) FORMAT="$2"; shift 2 ;;
     -h|--help) sed -n '2,40p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     *) echo "unknown option: $1" >&2; exit 2 ;;
   esac
@@ -265,12 +270,28 @@ DEF
 # 6. Archive.
 # ---------------------------------------------------------------------------
 mkdir -p "$OUT"
-log "packing…"
-tar -czf "$OUT/$NAME.tar.gz" -C "$STAGE" "$NAME"
-
-size="$(du -h "$OUT/$NAME.tar.gz" | cut -f1)"
 files="$(find "$STAGE/$NAME" -type f | wc -l)"
-log "done: $OUT/$NAME.tar.gz ($size, $files files)"
+produced=""
+
+if [ "$FORMAT" = "tar.gz" ] || [ "$FORMAT" = "both" ]; then
+  log "packing tar.gz…"
+  tar -czf "$OUT/$NAME.tar.gz" -C "$STAGE" "$NAME"
+  produced="${produced}  $OUT/$NAME.tar.gz ($(du -h "$OUT/$NAME.tar.gz" | cut -f1))"$'\n'
+fi
+
+if [ "$FORMAT" = "zip" ] || [ "$FORMAT" = "both" ]; then
+  if command -v zip >/dev/null; then
+    log "packing zip…"
+    ( cd "$STAGE" && zip -qr "$OUT/$NAME.zip" "$NAME" )
+    produced="${produced}  $OUT/$NAME.zip ($(du -h "$OUT/$NAME.zip" | cut -f1))"$'\n'
+  else
+    log "WARNING: zip not installed; only the tar.gz was produced."
+  fi
+fi
+
+[ -n "$produced" ] || die "no archive was produced (check --format)"
+log "done ($files files):"
+printf '%s' "$produced"
 echo
 echo "Next, on the host (no shell required):"
 echo
